@@ -78,3 +78,7 @@ Open an issue on this project
 ### Active Development
 
 The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/projects/1042066)
+
+## Disclaimer
+
+This buildpack is experimental and not yet intended for production use.
