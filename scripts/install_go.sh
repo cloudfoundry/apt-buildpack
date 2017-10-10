@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-GO_VERSION="1.9.0"
+GO_VERSION="1.9"
 
 export GoInstallDir="/tmp/go$GO_VERSION"
 mkdir -p $GoInstallDir
@@ -21,6 +21,7 @@ if [ ! -f $GoInstallDir/go/bin/go ]; then
   fi
 
   tar xzf /tmp/go.tar.gz -C $GoInstallDir
+  rm /tmp/go.tar.gz
 fi
 if [ ! -f $GoInstallDir/go/bin/go ]; then
   echo "       **ERROR** Could not download go"
