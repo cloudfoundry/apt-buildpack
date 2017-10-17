@@ -56,6 +56,18 @@ func (mr *MockStagerMockRecorder) DepDir() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DepDir", reflect.TypeOf((*MockStager)(nil).DepDir))
 }
 
+// CacheDir mocks base method
+func (m *MockStager) CacheDir() string {
+	ret := m.ctrl.Call(m, "CacheDir")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// CacheDir indicates an expected call of CacheDir
+func (mr *MockStagerMockRecorder) CacheDir() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CacheDir", reflect.TypeOf((*MockStager)(nil).CacheDir))
+}
+
 // MockApt is a mock of Apt interface
 type MockApt struct {
 	ctrl     *gomock.Controller
