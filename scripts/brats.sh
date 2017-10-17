@@ -9,5 +9,5 @@ fi
 GINKGO_NODES=${GINKGO_NODES:-3}
 GINKGO_ATTEMPTS=${GINKGO_ATTEMPTS:-1}
 
-cd $ROOT/src/apt/integration
+cd $ROOT/src/apt/brats
 ginkgo -r --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES

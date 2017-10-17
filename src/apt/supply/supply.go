@@ -9,6 +9,7 @@ import (
 type Stager interface {
 	LinkDirectoryInDepDir(string, string) error
 	DepDir() string
+	CacheDir() string
 }
 
 type Apt interface {
@@ -58,6 +59,7 @@ func (s *Supplier) Run() error {
 		s.Log.Error("Could not link files: %v", err)
 		return err
 	}
+
 	return nil
 }
 

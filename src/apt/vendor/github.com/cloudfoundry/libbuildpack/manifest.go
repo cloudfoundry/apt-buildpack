@@ -80,20 +80,26 @@ func (m *Manifest) CheckBuildpackVersion(cacheDir string) {
 
 	err := y.Load(filepath.Join(cacheDir, "BUILDPACK_METADATA"), &md)
 	if err != nil {
+		m.log.Warning("no file: dir == %s", cacheDir)
 		return
 	}
 
 	if md.Language != m.Language() {
+		m.log.Warning("diff language")
 		return
 	}
 
 	version, err := m.Version()
 	if err != nil {
+		m.log.Warning("no version")
 		return
 	}
 
 	if md.Version != version {
 		m.log.Warning("buildpack version changed from %s to %s", md.Version, version)
+		panic("Huh 1")
+	} else {
+		m.log.Warning("Huh 2")
 	}
 
 	return
@@ -110,6 +116,7 @@ func (m *Manifest) StoreBuildpackMetadata(cacheDir string) {
 	if exists, _ := FileExists(cacheDir); exists {
 		y := &YAML{}
 		_ = y.Write(filepath.Join(cacheDir, "BUILDPACK_METADATA"), &md)
+		m.log.Warning("Store BUILDPACK_METADATA: %s", cacheDir)
 	}
 }
 

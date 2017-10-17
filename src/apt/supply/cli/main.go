@@ -4,6 +4,7 @@ import (
 	"apt/apt"
 	"apt/supply"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -12,6 +13,11 @@ import (
 
 func main() {
 	logger := libbuildpack.NewLogger(os.Stdout)
+
+	cmd := exec.Command("find", ".")
+	cmd.Dir = "/tmp/cache"
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 
 	buildpackDir, err := libbuildpack.GetBuildpackDir()
 	if err != nil {
@@ -52,4 +58,6 @@ func main() {
 		logger.Error("Error writing config.yml: %s", err.Error())
 		os.Exit(15)
 	}
+
+	stager.StagingComplete()
 }
