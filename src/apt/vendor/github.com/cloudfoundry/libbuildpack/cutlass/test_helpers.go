@@ -18,43 +18,24 @@ type VersionedBuildpackPackage struct {
 }
 
 func FindRoot() (string, error) {
-	file := "VERSION"
+	dir, err := filepath.Abs(".")
+	if err != nil {
+		return "", err
+	}
 	for {
-		files, err := filepath.Glob(file)
+		if dir == "/" {
+			return "", fmt.Errorf("Could not find VERSION in the directory hierarchy")
+		}
+		if exist, err := libbuildpack.FileExists(filepath.Join(dir, "VERSION")); err != nil {
+			return "", err
+		} else if exist {
+			return dir, nil
+		}
+		dir, err = filepath.Abs(filepath.Join(dir, ".."))
 		if err != nil {
 			return "", err
 		}
-		if len(files) == 1 {
-			file, err = filepath.Abs(filepath.Dir(file))
-			if err != nil {
-				return "", err
-			}
-			return file, nil
-		}
-		file = filepath.Join("..", file)
 	}
-}
-
-func PackageUniquelyVersionedBuildpackExtra(name, version string, cached bool) (VersionedBuildpackPackage, error) {
-	bpDir, err := FindRoot()
-	if err != nil {
-		return VersionedBuildpackPackage{}, err
-	}
-
-	file, err := packager.Package(bpDir, packager.CacheDir, version, cached)
-	if err != nil {
-		return VersionedBuildpackPackage{}, err
-	}
-
-	err = CreateOrUpdateBuildpack(name, file)
-	if err != nil {
-		return VersionedBuildpackPackage{}, err
-	}
-
-	return VersionedBuildpackPackage{
-		Version: version,
-		File:    file,
-	}, nil
 }
 
 func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
@@ -70,6 +51,11 @@ func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
 	buildpackVersion := string(data)
 	buildpackVersion = fmt.Sprintf("%s.%s", buildpackVersion, time.Now().Format("20060102150405"))
 
+	file, err := packager.Package(bpDir, packager.CacheDir, buildpackVersion, Cached)
+	if err != nil {
+		return VersionedBuildpackPackage{}, err
+	}
+
 	var manifest struct {
 		Language string `yaml:"language"`
 	}
@@ -78,7 +64,15 @@ func PackageUniquelyVersionedBuildpack() (VersionedBuildpackPackage, error) {
 		return VersionedBuildpackPackage{}, err
 	}
 
-	return PackageUniquelyVersionedBuildpackExtra(manifest.Language, buildpackVersion, Cached)
+	err = CreateOrUpdateBuildpack(manifest.Language, file)
+	if err != nil {
+		return VersionedBuildpackPackage{}, err
+	}
+
+	return VersionedBuildpackPackage{
+		Version: buildpackVersion,
+		File:    file,
+	}, nil
 }
 
 func SeedRandom() {
