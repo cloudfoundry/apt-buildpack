@@ -1,1 +1,4 @@
 ascii
+:key:https://raw.githubusercontent.com/starkandwayne/homebrew-cf/master/public.key
+:repo:deb http://apt.starkandwayne.com stable main
+bosh-cli

@@ -1,6 +1,7 @@
 package apt
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -17,12 +18,13 @@ type Command interface {
 }
 
 type Apt struct {
-	command    Command
-	options    []string
-	aptFile    string
-	cacheDir   string
-	sourceList string
-	installDir string
+	command     Command
+	options     []string
+	aptFile     string
+	cacheDir    string
+	sourceList  string
+	trustedKeys string
+	installDir  string
 }
 
 func New(command Command, aptFile, cacheDir, installDir string) (*Apt, error) {
@@ -41,16 +43,21 @@ func New(command Command, aptFile, cacheDir, installDir string) (*Apt, error) {
 	sourceList := filepath.Join(cacheDir, "apt", "sources", "sources.list")
 	libbuildpack.CopyFile("/etc/apt/sources.list", sourceList)
 
+	trustedKeys := filepath.Join(cacheDir, "apt", "etc", "trusted.gpg")
+	libbuildpack.CopyFile("/etc/apt/trusted.gpg", trustedKeys)
+
 	return &Apt{
-		command:    command,
-		aptFile:    aptFile,
-		cacheDir:   filepath.Join(cacheDir, "apt", "cache"),
-		sourceList: sourceList,
+		command:     command,
+		aptFile:     aptFile,
+		cacheDir:    filepath.Join(cacheDir, "apt", "cache"),
+		sourceList:  sourceList,
+		trustedKeys: trustedKeys,
 		options: []string{
 			"-o", "debug::nolocking=true",
 			"-o", "dir::cache=" + filepath.Join(cacheDir, "apt", "cache"),
 			"-o", "dir::state=" + filepath.Join(cacheDir, "apt", "state"),
 			"-o", "dir::etc::sourcelist=" + sourceList,
+			"-o", "dir::etc::trusted=" + trustedKeys,
 		},
 		installDir: installDir,
 	}, nil
@@ -62,8 +69,20 @@ func (a *Apt) Update() (string, error) {
 		return "", err
 	}
 
-	repoRE, _ := regexp.Compile("^:repo:(.*)$")
+	keyRE, _ := regexp.Compile("^:key:(.*)$")
+	for _, pkg := range strings.Split(string(text), "\n") {
+		keyMatch := keyRE.FindStringSubmatch(pkg)
+		if len(keyMatch) == 2 {
+			keyURL := keyMatch[1]
+			fmt.Println("Installing custom repository key from", keyURL)
+			out, err := a.command.Output("/", "apt-key", "--keyring", a.trustedKeys, "adv", "--fetch-keys", keyURL)
+			if err != nil {
+				return out, err
+			}
+		}
+	}
 
+	repoRE, _ := regexp.Compile("^:repo:(.*)$")
 	for _, pkg := range strings.Split(string(text), "\n") {
 		repoMatch := repoRE.FindStringSubmatch(pkg)
 		if len(repoMatch) == 2 {
@@ -79,7 +98,6 @@ func (a *Apt) Update() (string, error) {
 			if _, err = f.WriteString(repositoryStr); err != nil {
 				return "", err
 			}
-
 		}
 	}
 	args := append(a.options, "update")
@@ -102,7 +120,7 @@ func (a *Apt) Download() (string, error) {
 				return output, err
 			}
 
-		} else if strings.HasPrefix(pkg, ":repo:") {
+		} else if strings.HasPrefix(pkg, ":") {
 			// Skip. This line was used earlier to add custom repository
 
 		} else if pkg != "" {

@@ -6,5 +6,9 @@ server.mount_proc '/' do |req, res|
   res.body = "Ascii: #{`ascii d`}"
 end
 
+server.mount_proc '/bosh' do |req, res|
+  res.body = "BOSH: #{`bosh2 -v`}"
+end
+
 trap("INT") { server.shutdown }
 server.start

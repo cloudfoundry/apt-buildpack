@@ -53,6 +53,7 @@ var _ = Describe("Apt", func() {
 				"-o", "dir::cache="+cacheDir+"/apt/cache",
 				"-o", "dir::state="+cacheDir+"/apt/state",
 				"-o", "dir::etc::sourcelist="+cacheDir+"/apt/sources/sources.list",
+				"-o", "dir::etc::trusted="+cacheDir+"/apt/etc/trusted.gpg",
 				"update",
 			).Return("Shell output", nil)
 
@@ -81,6 +82,7 @@ var _ = Describe("Apt", func() {
 				"-o", "dir::cache="+cacheDir+"/apt/cache",
 				"-o", "dir::state="+cacheDir+"/apt/state",
 				"-o", "dir::etc::sourcelist="+cacheDir+"/apt/sources/sources.list",
+				"-o", "dir::etc::trusted="+cacheDir+"/apt/etc/trusted.gpg",
 				"-y", "--force-yes", "-d", "install", "--reinstall",
 				"disneyland",
 			).Return("apt output", nil)
