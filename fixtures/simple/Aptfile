@@ -1,2 +1,5 @@
 ascii
 https://s3.amazonaws.com/apt.starkandwayne.com/pool/j/jq/jq_1.5_amd64.deb
+:key:https://raw.githubusercontent.com/starkandwayne/homebrew-cf/master/public.key
+:repo:deb http://apt.starkandwayne.com stable main
+bosh-cli

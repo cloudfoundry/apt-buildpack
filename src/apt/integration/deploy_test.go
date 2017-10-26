@@ -27,6 +27,7 @@ var _ = Describe("Apt supply buildpack", func() {
 			Expect(app.Stdout.String()).To(ContainSubstring("Installing apt packages"))
 			Expect(app.GetBody("/")).To(ContainSubstring("Ascii: ASCII 6/4 is decimal 100, hex 64"))
 			Expect(app.GetBody("/jq")).To(ContainSubstring("Jq: jq-1."))
+			Expect(app.GetBody("/bosh")).To(ContainSubstring("BOSH: version 2"))
 		})
 	})
 
