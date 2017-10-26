@@ -1,0 +1,9 @@
+---
+keys:
+- https://raw.githubusercontent.com/starkandwayne/homebrew-cf/master/public.key
+repos:
+- deb http://apt.starkandwayne.com stable main
+packages:
+- ascii
+- https://s3.amazonaws.com/apt.starkandwayne.com/pool/j/jq/jq_1.5_amd64.deb
+- bosh-cli

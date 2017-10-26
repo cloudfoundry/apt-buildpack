@@ -13,6 +13,11 @@ type Stager interface {
 }
 
 type Apt interface {
+	Setup() error
+	HasKeys() bool
+	HasRepos() bool
+	AddKeys() (string, error)
+	AddRepos() error
 	Update() (string, error)
 	Download() (string, error)
 	Install() (string, error)
@@ -33,6 +38,28 @@ func New(stager Stager, apt Apt, logger *libbuildpack.Logger) *Supplier {
 }
 
 func (s *Supplier) Run() error {
+	if err := s.Apt.Setup(); err != nil {
+		s.Log.Error("Failed to setup apt: %v", err)
+		return err
+	}
+
+	if s.Apt.HasKeys() {
+		s.Log.BeginStep("Adding apt keys")
+		if output, err := s.Apt.AddKeys(); err != nil {
+			s.Log.Error("Failed to add apt keys: %v", err)
+			s.Log.Info(output)
+			return err
+		}
+	}
+
+	if s.Apt.HasRepos() {
+		s.Log.BeginStep("Adding apt repos")
+		if err := s.Apt.AddRepos(); err != nil {
+			s.Log.Error("Failed to add apt repos: %v", err)
+			return err
+		}
+	}
+
 	s.Log.BeginStep("Updating apt cache")
 	if output, err := s.Apt.Update(); err != nil {
 		s.Log.Error("Failed to update apt cache: %v", err)

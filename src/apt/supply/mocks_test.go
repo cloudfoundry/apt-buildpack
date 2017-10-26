@@ -91,6 +91,67 @@ func (m *MockApt) EXPECT() *MockAptMockRecorder {
 	return m.recorder
 }
 
+// Setup mocks base method
+func (m *MockApt) Setup() error {
+	ret := m.ctrl.Call(m, "Setup")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Setup indicates an expected call of Setup
+func (mr *MockAptMockRecorder) Setup() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Setup", reflect.TypeOf((*MockApt)(nil).Setup))
+}
+
+// HasKeys mocks base method
+func (m *MockApt) HasKeys() bool {
+	ret := m.ctrl.Call(m, "HasKeys")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasKeys indicates an expected call of HasKeys
+func (mr *MockAptMockRecorder) HasKeys() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasKeys", reflect.TypeOf((*MockApt)(nil).HasKeys))
+}
+
+// HasRepos mocks base method
+func (m *MockApt) HasRepos() bool {
+	ret := m.ctrl.Call(m, "HasRepos")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasRepos indicates an expected call of HasRepos
+func (mr *MockAptMockRecorder) HasRepos() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasRepos", reflect.TypeOf((*MockApt)(nil).HasRepos))
+}
+
+// AddKeys mocks base method
+func (m *MockApt) AddKeys() (string, error) {
+	ret := m.ctrl.Call(m, "AddKeys")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddKeys indicates an expected call of AddKeys
+func (mr *MockAptMockRecorder) AddKeys() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddKeys", reflect.TypeOf((*MockApt)(nil).AddKeys))
+}
+
+// AddRepos mocks base method
+func (m *MockApt) AddRepos() error {
+	ret := m.ctrl.Call(m, "AddRepos")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddRepos indicates an expected call of AddRepos
+func (mr *MockAptMockRecorder) AddRepos() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRepos", reflect.TypeOf((*MockApt)(nil).AddRepos))
+}
+
 // Update mocks base method
 func (m *MockApt) Update() (string, error) {
 	ret := m.ctrl.Call(m, "Update")

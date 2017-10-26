@@ -51,6 +51,9 @@ var _ = Describe("Supply", func() {
 	})
 
 	allowAllAptMethods := func() {
+		mockApt.EXPECT().Setup().AnyTimes()
+		mockApt.EXPECT().HasKeys().AnyTimes()
+		mockApt.EXPECT().HasRepos().AnyTimes()
 		mockApt.EXPECT().Update().AnyTimes()
 		mockApt.EXPECT().Download().AnyTimes()
 		mockApt.EXPECT().Install().AnyTimes()
@@ -63,6 +66,9 @@ var _ = Describe("Supply", func() {
 	Describe("Run", func() {
 		It("install the apt packages", func() {
 			gomock.InOrder(
+				mockApt.EXPECT().Setup(),
+				mockApt.EXPECT().HasKeys(),
+				mockApt.EXPECT().HasRepos(),
 				mockApt.EXPECT().Update(),
 				mockApt.EXPECT().Download(),
 				mockApt.EXPECT().Install(),
@@ -80,6 +86,38 @@ var _ = Describe("Supply", func() {
 			mockStager.EXPECT().LinkDirectoryInDepDir(filepath.Join(depDir, "apt", "lib", "x86_64-linux-gnu"), "lib")
 
 			Expect(supplier.Run()).To(Succeed())
+		})
+
+		Context("Aptfile has keys", func() {
+			It("Calls AddKeys", func() {
+				gomock.InOrder(
+					mockApt.EXPECT().Setup(),
+					mockApt.EXPECT().HasKeys().Return(true),
+					mockApt.EXPECT().AddKeys(),
+					mockApt.EXPECT().HasRepos(),
+					mockApt.EXPECT().Update(),
+					mockApt.EXPECT().Download(),
+					mockApt.EXPECT().Install(),
+				)
+				allowAllDepLinkingMethods()
+				Expect(supplier.Run()).To(Succeed())
+			})
+		})
+
+		Context("Aptfile has repos", func() {
+			It("Calls AddRepos", func() {
+				gomock.InOrder(
+					mockApt.EXPECT().Setup(),
+					mockApt.EXPECT().HasKeys(),
+					mockApt.EXPECT().HasRepos().Return(true),
+					mockApt.EXPECT().AddRepos(),
+					mockApt.EXPECT().Update(),
+					mockApt.EXPECT().Download(),
+					mockApt.EXPECT().Install(),
+				)
+				allowAllDepLinkingMethods()
+				Expect(supplier.Run()).To(Succeed())
+			})
 		})
 	})
 })
