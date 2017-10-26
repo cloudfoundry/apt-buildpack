@@ -42,8 +42,8 @@ func main() {
 	}
 
 	command := &libbuildpack.Command{}
-	a, err := apt.New(command, filepath.Join(stager.BuildDir(), "Aptfile"), stager.CacheDir(), filepath.Join(stager.DepDir(), "apt"))
-	if err != nil {
+	a := apt.New(command, filepath.Join(stager.BuildDir(), "Aptfile.yml"), stager.CacheDir(), filepath.Join(stager.DepDir(), "apt"))
+	if err := a.Setup(); err != nil {
 		logger.Error("Unable to initialize apt package: %s", err.Error())
 		os.Exit(13)
 	}
