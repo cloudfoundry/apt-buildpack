@@ -53,13 +53,13 @@ var _ = Describe("Apt", func() {
 			})).To(Succeed())
 			Expect(a.Setup()).To(Succeed())
 		})
-		It("sets keys from Aptfile.yml", func() {
+		It("sets keys from apt.yml", func() {
 			Expect(a.Keys).To(Equal([]string{"https://example.com/public.key"}))
 		})
-		It("sets repos from Aptfile.yml", func() {
+		It("sets repos from apt.yml", func() {
 			Expect(a.Repos).To(Equal([]string{"deb http://apt.example.com stable main"}))
 		})
-		It("sets packages from Aptfile.yml", func() {
+		It("sets packages from apt.yml", func() {
 			Expect(a.Packages).To(Equal([]string{"abc", "def"}))
 		})
 		It("copies sources.list", func() {

@@ -41,8 +41,19 @@ func main() {
 		os.Exit(13)
 	}
 
+	if exists, err := libbuildpack.FileExists(filepath.Join(stager.BuildDir(), "apt.yml")); err != nil {
+		logger.Error("Unable to test existence of apt.yml: %s", err.Error())
+		os.Exit(16)
+	} else if !exists {
+		logger.Error("Apt buildpack requires apt.yml\n(https://github.com/cloudfoundry/apt-buildpack/blob/master/fixtures/simple/apt.yml)")
+		if exists, err := libbuildpack.FileExists(filepath.Join(stager.BuildDir(), "Aptfile")); err != nil || exists {
+			logger.Error("Aptfile is deprecated. Please convert to apt.yml")
+		}
+		os.Exit(17)
+	}
+
 	command := &libbuildpack.Command{}
-	a := apt.New(command, filepath.Join(stager.BuildDir(), "Aptfile.yml"), stager.CacheDir(), filepath.Join(stager.DepDir(), "apt"))
+	a := apt.New(command, filepath.Join(stager.BuildDir(), "apt.yml"), stager.CacheDir(), filepath.Join(stager.DepDir(), "apt"))
 	if err := a.Setup(); err != nil {
 		logger.Error("Unable to initialize apt package: %s", err.Error())
 		os.Exit(13)
