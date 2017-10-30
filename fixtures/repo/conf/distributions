@@ -1,0 +1,8 @@
+Origin: apt.example.com
+Label: apt repository
+Codename: trusty
+Architectures: amd64 source
+Components: main
+Description: Fake debian package repo
+SignWith: yes
+Pull: trusty

@@ -1,0 +1,36 @@
+Package: bosh-cli
+Version: 2.0.45
+License: Apache2
+Vendor: Cloud Foundry Foundation
+Architecture: amd64
+Maintainer: https://github.com/cloudfoundry/bosh-cli/graphs/contributors
+Installed-Size: 54173
+Provides: bosh, bosh2
+Homepage: https://bosh.io/docs/cli-v2.html
+Priority: extra
+Section: default
+Filename: pool/main/b/bosh-cli/bosh-cli_2.0.45_amd64.deb
+Size: 14361628
+SHA256: 048f3d360b767c8dd0c3c2cf0db9428977cd461b5bc002d62be25a627d549a95
+SHA1: e03a3e3f6dde796320f881e20c3ebc20c4fb8f85
+MD5sum: 673b8524720d759f98d98d65d399972e
+Description: Interact with BOSH director
+
+Package: jq
+Version: 1.5
+License: MIT
+Vendor: None
+Architecture: amd64
+Maintainer: https://github.com/stedolan/jq/graphs/contributors
+Installed-Size: 2957
+Provides: jq
+Homepage: https://stedolan.github.io/jq/
+Priority: extra
+Section: default
+Filename: pool/main/j/jq/jq_1.5_amd64.deb
+Size: 1371676
+SHA256: d0b9f05fe408f5f83c4f679dd7d8c3046d21b31135d162e317bedba7f17afd89
+SHA1: 3ee1252abb61c8d9336a3bf6cf22daf77fad2855
+MD5sum: ef250f3da8c67328c717ac89bb3f4ccd
+Description: lightweight and flexible command-line JSON processor
+

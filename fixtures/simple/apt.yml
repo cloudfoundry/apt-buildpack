@@ -1,9 +1,8 @@
 ---
 keys:
-- https://raw.githubusercontent.com/starkandwayne/homebrew-cf/master/public.key
+- {{.repoBaseURL}}/gpg_public_key
 repos:
-- deb http://apt.starkandwayne.com stable main
+- deb {{.repoBaseURL}} trusty main
 packages:
-- ascii
-- https://s3.amazonaws.com/apt.starkandwayne.com/pool/j/jq/jq_1.5_amd64.deb
+- {{.repoBaseURL}}/pool/main/j/jq/jq_1.5_amd64.deb
 - bosh-cli

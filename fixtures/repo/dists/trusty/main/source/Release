@@ -1,0 +1,5 @@
+Component: main
+Origin: apt.example.com
+Label: apt repository
+Architecture: source
+Description: Fake debian package repo

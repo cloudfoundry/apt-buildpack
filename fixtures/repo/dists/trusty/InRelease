@@ -1,0 +1,40 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Origin: apt.example.com
+Label: apt repository
+Codename: trusty
+Date: Mon, 30 Oct 2017 18:52:32 UTC
+Architectures: amd64
+Components: main
+Description: Fake debian package repo
+MD5Sum:
+ 3263e121149823fe1f59ab397084a920 1098 main/binary-amd64/Packages
+ fb98b5d499d8999002a7b4346c42ea8a 623 main/binary-amd64/Packages.gz
+ 3b4f5654c8979afb9247444926dd503c 120 main/binary-amd64/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 main/source/Sources
+ 7029066c27ac6f5ef18d660d5741979a 20 main/source/Sources.gz
+ b42bd08b480a15267917f6b19cfb1a01 121 main/source/Release
+SHA1:
+ c25122fa038f1dd50a9c2de34bee4e369b59e603 1098 main/binary-amd64/Packages
+ 399d8b84818f0866c5cba86b42477e7bcbc0a6dc 623 main/binary-amd64/Packages.gz
+ c53c87d66dc41dda0d35eb02420372e7892bba71 120 main/binary-amd64/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 main/source/Sources.gz
+ 52ec7493603880b93eb172b94fe7d679939b6b10 121 main/source/Release
+SHA256:
+ 4bf9a45dab9f00c14001cdb91e33e27b5948a140e37b547d15726acf00b43b10 1098 main/binary-amd64/Packages
+ d35ffe2e7a3526abf624673944ae62d603f5b2e62ffe26fb55eb05357e2efc81 623 main/binary-amd64/Packages.gz
+ 5e4998efb12056e12abd8996a27cd2fc4d9ef471386c60dcdab872f5456520f0 120 main/binary-amd64/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 main/source/Sources.gz
+ 1e2c8e7236b34283865c60f11ee3a96382b66167f0dde826b9f8f24bbab1c811 121 main/source/Release
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iJwEAQECAAYFAln3dPAACgkQ1jBJVSrbsvRmtAP+PWxOXxv0AGYtL//zw421nuia
+FOR0elhvBaU198/N9UcKfIMiR0Ej/YwrFU1gQLWHTMAJivEHCweRVaoYZ5NwAjnj
+TZyqaXTQb4ccMGGFPmFUd69t4I1V0Ro/pAEE5VAXuwS17SElodOp/E4/p4XaMOAE
+dyqeOpyoWxf2SXXfctw=
+=XS+B
+-----END PGP SIGNATURE-----
