@@ -4,6 +4,32 @@
 
 A Cloud Foundry [buildpack](http://docs.cloudfoundry.org/buildpacks/) for apps requiring custom apt packages.
 
+
+### Buildpack User Documentation
+
+The apt buildpack can be used to install deb packages prior to use in another buildpack. To configure which packages to install, provide `apt.yml` in your application and include a list of packages to install, eg:
+
+```
+---
+packages:
+- ascii
+- libxml
+- https://example.com/exciting.deb
+```
+
+If you would like to use custom apt repositories, you can add `keys` and `repos` to the `apt.yml`, eg:
+
+```
+---
+keys:
+- https://example.com/public.key
+repos:
+- deb http://apt.example.com stable main
+packages:
+- ascii
+- libxml
+```
+
 ### Building the Buildpack
 
 To build this buildpack, run the following command from the buildpack's directory:
