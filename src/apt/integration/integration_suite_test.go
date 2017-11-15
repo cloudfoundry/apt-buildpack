@@ -54,6 +54,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 	bpDir, err = cutlass.FindRoot()
 	Expect(err).NotTo(HaveOccurred())
 
+	Expect(cutlass.CopyCfHome()).To(Succeed())
 	cutlass.SeedRandom()
 	cutlass.DefaultStdoutStderr = GinkgoWriter
 })
