@@ -15,4 +15,5 @@ include_files:
 - VERSION
 - bin/compile
 - bin/supply
+- bin/detect
 - manifest.yml
