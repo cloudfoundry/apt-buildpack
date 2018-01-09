@@ -147,17 +147,33 @@ var _ = Describe("Apt", func() {
 	})
 
 	Describe("Download", func() {
+		fooUrl := "http://example.com/foo.deb"
+		barUrl := "http://example.com/bar.deb"
+
 		JustBeforeEach(func() {
-			a.Packages = []string{"http://example.com/holiday.deb", "disneyland"}
+			a.Packages = []string{fooUrl, barUrl, "foo", "bar"}
 		})
 		It("downloads user specified packages", func() {
-			packageFile := cacheDir + "/apt/cache/archives/holiday.deb"
+			debCache := cacheDir + "/apt/cache/archives"
+
+			// downloads deb files individually via curl
+			packageFile := debCache + "/foo.deb"
 			mockCommand.EXPECT().Output(
 				"/", "curl", "-s", "-L",
 				"-z", packageFile,
 				"-o", packageFile,
-				"http://example.com/holiday.deb",
+				fooUrl,
 			).Return("curl output", nil)
+
+			packageFile = debCache + "/bar.deb"
+			mockCommand.EXPECT().Output(
+				"/", "curl", "-s", "-L",
+				"-z", packageFile,
+				"-o", packageFile,
+				barUrl,
+			).Return("curl output", nil)
+
+			// downloads all packages in one go
 			mockCommand.EXPECT().Output(
 				"/", "apt-get",
 				"-o", "debug::nolocking=true",
@@ -166,8 +182,10 @@ var _ = Describe("Apt", func() {
 				"-o", "dir::etc::sourcelist="+cacheDir+"/apt/sources/sources.list",
 				"-o", "dir::etc::trusted="+cacheDir+"/apt/etc/trusted.gpg",
 				"-y", "--force-yes", "-d", "install", "--reinstall",
-				"disneyland",
+				"foo",
+				"bar",
 			).Return("apt output", nil)
+
 			Expect(a.Download()).To(Equal(""))
 		})
 	})

@@ -107,21 +107,31 @@ func (a *Apt) Update() (string, error) {
 }
 
 func (a *Apt) Download() (string, error) {
-	aptArgs := append(a.options, "-y", "--force-yes", "-d", "install", "--reinstall")
+	debPackages := make([]string, 0)
+	repoPackages := make([]string, 0)
 
 	for _, pkg := range a.Packages {
 		if strings.HasSuffix(pkg, ".deb") {
-			packageFile := filepath.Join(a.cacheDir, "archives", filepath.Base(pkg))
-			args := []string{"-s", "-L", "-z", packageFile, "-o", packageFile, pkg}
-			if output, err := a.command.Output("/", "curl", args...); err != nil {
-				return output, err
-			}
+			debPackages = append(debPackages, pkg)
 		} else if pkg != "" {
-			args := append(aptArgs, pkg)
-			if output, err := a.command.Output("/", "apt-get", args...); err != nil {
-				return output, err
-			}
+			repoPackages = append(repoPackages, pkg)
 		}
+	}
+
+	// download .deb packages individually
+	for _, pkg := range debPackages {
+		packageFile := filepath.Join(a.cacheDir, "archives", filepath.Base(pkg))
+		args := []string{"-s", "-L", "-z", packageFile, "-o", packageFile, pkg}
+		if output, err := a.command.Output("/", "curl", args...); err != nil {
+			return output, err
+		}
+	}
+
+	// download all repo packages in one invocation
+	aptArgs := append(a.options, "-y", "--force-yes", "-d", "install", "--reinstall")
+	args := append(aptArgs, repoPackages...)
+	if output, err := a.command.Output("/", "apt-get", args...); err != nil {
+		return output, err
 	}
 
 	return "", nil
