@@ -32,7 +32,7 @@ packages:
 
 ### Building the Buildpack
 
-To build this buildpack, run the following command from the buildpack's directory:
+To build this buildpack, run the following commands from the buildpack's directory:
 
 1. Source the .envrc file in the buildpack directory.
 
@@ -64,9 +64,13 @@ To build this buildpack, run the following command from the buildpack's director
 
 ### Testing
 
-Buildpacks use the [Cutlass](https://github.com/cloudfoundry/libbuildpack/cutlass) framework for running integration tests.
+Buildpacks use the [Cutlass](https://github.com/cloudfoundry/libbuildpack/tree/master/cutlass) framework for running integration tests against Cloud Foundry. Before running the integration tests, you need to login to your Cloud Foundry using the [cf cli](https://github.com/cloudfoundry/cli):
 
-To test this buildpack, run the following command from the buildpack's directory:
+ ```bash
+ cf login -a https://api.your-cf.com -u name@example.com -p pa55woRD
+ ```
+
+Note that your user requires permissions to run `cf create-buildpack` and `cf update-buildpack`. To run the integration tests, run the following command from the buildpack's directory:
 
 1. Source the .envrc file in the buildpack directory.
 
@@ -87,15 +91,13 @@ To test this buildpack, run the following command from the buildpack's directory
     ./scripts/integration.sh
     ```
 
-More information can be found on Github [cutlass](https://github.com/cloudfoundry/libbuildpack/cutlass).
-
 ### Contributing
 
 Find our guidelines [here](./CONTRIBUTING.md).
 
 ### Help and Support
 
-Join the #buildpacks channel in our [Slack community](http://slack.cloudfoundry.org/)
+Join the #buildpacks channel in our [Slack community](http://slack.cloudfoundry.org/).
 
 ### Reporting Issues
 
@@ -103,7 +105,7 @@ Open an issue on this project
 
 ### Active Development
 
-The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/projects/1042066)
+The project backlog is on [Pivotal Tracker](https://www.pivotaltracker.com/projects/1042066).
 
 ## Disclaimer
 
