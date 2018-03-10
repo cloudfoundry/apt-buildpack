@@ -30,6 +30,16 @@ packages:
 - libxml
 ```
 
+#### Using a PPA
+
+It's possible to use a PPA, but you need to indicate the GPG key for the PPA and the full repo line, not just the PPA name.  
+
+To locate this information, navigate to the PPA on Launchpad.  Expand where it says "Technical Details about this PPA".  See [this Stack Overflow post](https://askubuntu.com/questions/496495/can-a-ppa-repository-be-added-to-etc-apt-source-list#496529) if you're having trouble finding it.
+
+Under that, select the correct version of Ubuntu from the drop down.  Then you can copy and paste the sources.list entries presented there under the `repos` block in `apt.yml`.  Beneath the sources.list entry, you'll a label named "Signing Key" and beneath that a link.  Click on the link.  On the page that loads, you should see one GPG key entry.  In the `bits/keyID` column, you'll see a link.  Right click on that and copy the link.  Paste that in under the `keys` block in your `apt.yml`.
+
+You should now be able to install packages from that PPA.
+
 ### Building the Buildpack
 
 To build this buildpack, run the following command from the buildpack's directory:
