@@ -47,14 +47,18 @@ var _ = Describe("Apt", func() {
 	Describe("Setup", func() {
 		JustBeforeEach(func() {
 			Expect(libbuildpack.NewYAML().Write(aptfile, map[string][]string{
-				"keys":     []string{"https://example.com/public.key"},
-				"repos":    []string{"deb http://apt.example.com stable main"},
-				"packages": []string{"abc", "def"},
+				"gpg_advanced_options": []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"},
+				"keys":                 []string{"https://example.com/public.key"},
+				"repos":                []string{"deb http://apt.example.com stable main"},
+				"packages":             []string{"abc", "def"},
 			})).To(Succeed())
 			Expect(a.Setup()).To(Succeed())
 		})
 		It("sets keys from apt.yml", func() {
 			Expect(a.Keys).To(Equal([]string{"https://example.com/public.key"}))
+		})
+		It("sets gpg advanced options from apt.yml", func() {
+			Expect(a.GpgAdvancedOptions).To(Equal([]string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"}))
 		})
 		It("sets repos from apt.yml", func() {
 			Expect(a.Repos).To(Equal([]string{"deb http://apt.example.com stable main"}))
@@ -70,7 +74,53 @@ var _ = Describe("Apt", func() {
 		})
 	})
 
+	Describe("HasKeys", func() {
+		Context("GPG Advanced Options have been specified", func() {
+			JustBeforeEach(func() {
+				a.GpgAdvancedOptions = []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"}
+			})
+
+			It("returns true from HasKeys()", func() {
+				Expect(a.HasKeys()).To(BeTrue())
+			})
+		})
+
+		Context("Keys have been specified", func() {
+			JustBeforeEach(func() {
+				a.Keys = []string{"https://example.com/public.key"}
+			})
+
+			It("returns true from HasKeys()", func() {
+				Expect(a.HasKeys()).To(BeTrue())
+			})
+		})
+
+		Context("Neither GPG Advanced Options nor Keys have been specfied", func() {
+			It("returns false from HasKeys()", func() {
+				Expect(a.HasKeys()).To(BeFalse())
+			})
+		})
+	})
+
 	Describe("AddKeys", func() {
+		Context("GPG Advanced Options have been specified", func() {
+			JustBeforeEach(func() {
+				a.GpgAdvancedOptions = []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"}
+			})
+
+			It("adds the keys to the apt trusted keys", func() {
+				mockCommand.EXPECT().Output(
+					"/", "apt-key",
+					"--keyring", filepath.Join(cacheDir, "apt", "etc", "trusted.gpg"),
+					"adv",
+					"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54",
+				).Return("Shell output", nil)
+
+				_, err := a.AddKeys()
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
 		Context("Keys have been specified", func() {
 			JustBeforeEach(func() {
 				a.Keys = []string{"https://example.com/public.key"}
