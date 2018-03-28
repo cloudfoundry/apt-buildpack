@@ -16,17 +16,18 @@ type Command interface {
 }
 
 type Apt struct {
-	command     Command
-	options     []string
-	aptFilePath string
-	Keys        []string `json:"keys"`
-	Repos       []string `json:"repos"`
-	Packages    []string `json:"packages"`
-	cacheDir    string
-	stateDir    string
-	sourceList  string
-	trustedKeys string
-	installDir  string
+	command            Command
+	options            []string
+	aptFilePath        string
+	Keys               []string `yaml:"keys"`
+	GpgAdvancedOptions []string `yaml:"gpg_advanced_options"`
+	Repos              []string `yaml:"repos"`
+	Packages           []string `yaml:"packages"`
+	cacheDir           string
+	stateDir           string
+	sourceList         string
+	trustedKeys        string
+	installDir         string
 }
 
 func New(command Command, aptFile, cacheDir, installDir string) *Apt {
@@ -74,10 +75,15 @@ func (a *Apt) Setup() error {
 	return nil
 }
 
-func (a *Apt) HasKeys() bool  { return len(a.Keys) > 0 }
+func (a *Apt) HasKeys() bool  { return len(a.Keys) > 0 || len(a.GpgAdvancedOptions) > 0 }
 func (a *Apt) HasRepos() bool { return len(a.Repos) > 0 }
 
 func (a *Apt) AddKeys() (string, error) {
+	for _, options := range a.GpgAdvancedOptions {
+		if out, err := a.command.Output("/", "apt-key", "--keyring", a.trustedKeys, "adv", options); err != nil {
+			return out, fmt.Errorf("Could not pass gpg advanced options `%s`: %v", options, err)
+		}
+	}
 	for _, keyURL := range a.Keys {
 		if out, err := a.command.Output("/", "apt-key", "--keyring", a.trustedKeys, "adv", "--fetch-keys", keyURL); err != nil {
 			return out, fmt.Errorf("Could not add apt key %s: %v", keyURL, err)
