@@ -1,3 +1,15 @@
+v0.1.2 Apr 03, 2018
+====================
+
+* Merge pull request #11 from flavorjones/flavorjones-alt-apt-keys-feature
+  support gpg advanced options for apt repo key retrieval
+
+* Document new buildpack-packager build command
+  (https://www.pivotaltracker.com/story/show/155223266)
+
+* Merge pull request #8 from Meshcloud/feature/optimize-apt-get
+  Use a single apt-get install invocation to download packages
+
 v0.1.1 Nov 06, 2017
 ====================
 
