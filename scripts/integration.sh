@@ -8,6 +8,7 @@ fi
 
 GINKGO_NODES=${GINKGO_NODES:-3}
 GINKGO_ATTEMPTS=${GINKGO_ATTEMPTS:-1}
+export CF_STACK=${CF_STACK:-cflinuxfs2}
 
 cd $ROOT/src/apt/integration
 ginkgo -r --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES
