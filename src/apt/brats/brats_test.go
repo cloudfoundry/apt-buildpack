@@ -46,7 +46,7 @@ var _ = Describe("Apt supply buildpack", func() {
 			Expect(aptYaml.Close()).To(Succeed())
 
 			app = cutlass.New(appDir)
-			app.Buildpacks = []string{buildpacks.Unbuilt, "binary_buildpack"}
+			app.Buildpacks = []string{buildpacks.Unbuilt, "https://github.com/cloudfoundry/binary-buildpack#master"}
 		})
 
 		It("runs", func() {

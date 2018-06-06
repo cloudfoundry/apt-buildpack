@@ -52,7 +52,7 @@ var _ = Describe("Apt supply buildpack", func() {
 	Context("as a supply buildpack", func() {
 		BeforeEach(func() {
 			app = cutlass.New(appDir)
-			app.Buildpacks = []string{"apt_buildpack", "binary_buildpack"}
+			app.Buildpacks = []string{"apt_buildpack", "https://github.com/cloudfoundry/binary-buildpack#master"}
 			app.SetEnv("BP_DEBUG", "1")
 		})
 
@@ -68,7 +68,7 @@ var _ = Describe("Apt supply buildpack", func() {
 	Context("as a final buildpack", func() {
 		BeforeEach(func() {
 			app = cutlass.New(appDir)
-			app.Buildpacks = []string{"binary_buildpack", "apt_buildpack"}
+			app.Buildpacks = []string{"https://github.com/cloudfoundry/binary-buildpack#master", "apt_buildpack"}
 			app.SetEnv("BP_DEBUG", "1")
 		})
 

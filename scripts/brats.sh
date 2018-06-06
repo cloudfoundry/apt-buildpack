@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export ROOT=$(dirname $(readlink -f ${BASH_SOURCE%/*}))
+export ROOT="$( dirname "${BASH_SOURCE[0]}" )/.."
 if [ ! -f "$ROOT/.bin/ginkgo" ]; then
   (cd "$ROOT/src/apt/vendor/github.com/onsi/ginkgo/ginkgo/" && go install)
 fi
