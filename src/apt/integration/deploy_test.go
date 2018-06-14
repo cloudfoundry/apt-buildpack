@@ -22,7 +22,7 @@ var _ = Describe("Apt supply buildpack", func() {
 
 	BeforeEach(func() {
 		repo = cutlass.New(filepath.Join(bpDir, "fixtures", "repo"))
-		repo.Buildpacks = []string{"staticfile_buildpack"}
+		repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
 		Expect(repo.Push()).To(Succeed())
 		Eventually(func() ([]string, error) { return repo.InstanceStates() }, 20*time.Second).Should(Equal([]string{"RUNNING"}))
 
