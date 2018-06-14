@@ -27,7 +27,7 @@ var _ = Describe("Apt supply buildpack", func() {
 	Context("Unbuilt buildpack (eg github)", func() {
 		BeforeEach(func() {
 			repo = cutlass.New(filepath.Join(bpDir, "fixtures", "repo"))
-			repo.Buildpacks = []string{"staticfile_buildpack"}
+			repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
 			PushApp(repo)
 
 			appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", "simple"))
