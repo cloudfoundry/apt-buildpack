@@ -38,7 +38,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 	cmd := exec.Command("git", "archive", "-o", filepath.Join("/tmp", buildpacks.Unbuilt+".zip"), "HEAD")
 	cmd.Dir = bpDir
 	Expect(cmd.Run()).To(Succeed())
-	Expect(cutlass.CreateOrUpdateBuildpack(buildpacks.Unbuilt, filepath.Join("/tmp", buildpacks.Unbuilt+".zip"))).To(Succeed())
+	Expect(cutlass.CreateOrUpdateBuildpack(buildpacks.Unbuilt, filepath.Join("/tmp", buildpacks.Unbuilt+".zip"), os.Getenv("CF_STACK"))).To(Succeed())
 	Expect(os.Remove(filepath.Join("/tmp", buildpacks.Unbuilt+".zip"))).To(Succeed())
 
 	buildpacks.Unbuilt = buildpacks.Unbuilt + "_buildpack"
