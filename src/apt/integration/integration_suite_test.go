@@ -121,7 +121,7 @@ func AssertUsesProxyDuringStagingIfPresent(fixtureName string) {
 			Expect(err).To(BeNil())
 			defer os.Remove(bpFile)
 
-			traffic, built, err := cutlass.InternetTraffic(
+			traffic, built, _, err := cutlass.InternetTraffic(
 				bpDir,
 				filepath.Join("fixtures", fixtureName),
 				bpFile,
@@ -152,7 +152,7 @@ func AssertNoInternetTraffic(fixtureName string) {
 		Expect(err).To(BeNil())
 		defer os.Remove(bpFile)
 
-		traffic, built, err := cutlass.InternetTraffic(
+		traffic, built, _, err := cutlass.InternetTraffic(
 			bpDir,
 			filepath.Join("fixtures", fixtureName),
 			bpFile,
