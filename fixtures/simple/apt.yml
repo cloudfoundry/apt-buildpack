@@ -3,6 +3,10 @@ keys:
 - {{.repoBaseURL}}/gpg_public_key
 repos:
 - deb {{.repoBaseURL}} trusty main
+- deb {{.repoBaseURL}} trusty-backports main
+priorities:
+  - repository: trusty-backports
+    priority: 100
 packages:
 - {{.repoBaseURL}}/pool/main/j/jq/jq_1.5_amd64.deb
 - bosh-cli
