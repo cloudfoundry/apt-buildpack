@@ -12,6 +12,19 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+type AptRepoPriority struct {
+	Repository string
+	Priority   string
+}
+
+type AptYaml struct {
+	GpgAdvancedOptions []string `yaml:"gpg_advanced_options"`
+	Keys               []string `yaml:"keys"`
+	Repos              []string `yaml:"repos"`
+	Packages           []string `yaml:"packages"`
+	Priorities         []AptRepoPriority `yaml:"priorities"`
+}
+
 //go:generate mockgen -source=apt.go --destination=mocks_test.go --package=apt_test
 
 var _ = Describe("Apt", func() {
@@ -46,12 +59,14 @@ var _ = Describe("Apt", func() {
 
 	Describe("Setup", func() {
 		JustBeforeEach(func() {
-			Expect(libbuildpack.NewYAML().Write(aptfile, map[string][]string{
-				"gpg_advanced_options": []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"},
-				"keys":                 []string{"https://example.com/public.key"},
-				"repos":                []string{"deb http://apt.example.com stable main"},
-				"packages":             []string{"abc", "def"},
-			})).To(Succeed())
+			y := &AptYaml{
+				GpgAdvancedOptions: []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"},
+				Keys:               []string{"https://example.com/public.key"},
+				Repos:              []string{"deb http://apt.example.com stable main"},
+				Packages:           []string{"abc", "def"},
+				Priorities:         []AptRepoPriority{{Repository: "stable", Priority: "101"}},
+			}
+			Expect(libbuildpack.NewYAML().Write(aptfile, y)).To(Succeed())
 			Expect(a.Setup()).To(Succeed())
 		})
 		It("sets keys from apt.yml", func() {
@@ -66,11 +81,17 @@ var _ = Describe("Apt", func() {
 		It("sets packages from apt.yml", func() {
 			Expect(a.Packages).To(Equal([]string{"abc", "def"}))
 		})
+		It("sets priorities from apt.yml", func() {
+			Expect(a.Priorities).To(Equal([]apt.RepoPriority{{Repository: "stable", Priority: "101"}}))
+		})
 		It("copies sources.list", func() {
 			Expect(filepath.Join(cacheDir, "apt", "sources", "sources.list")).To(BeARegularFile())
 		})
 		It("copies trusted.gpg", func() {
 			Expect(filepath.Join(cacheDir, "apt", "etc", "trusted.gpg")).To(BeARegularFile())
+		})
+		It("copies preferences", func() {
+			Expect(filepath.Join(cacheDir, "apt", "etc", "preferences")).To(SatisfyAny(BeARegularFile(),Not(BeAnExistingFile())))
 		})
 	})
 
@@ -187,6 +208,7 @@ var _ = Describe("Apt", func() {
 				"-o", "dir::state="+cacheDir+"/apt/state",
 				"-o", "dir::etc::sourcelist="+cacheDir+"/apt/sources/sources.list",
 				"-o", "dir::etc::trusted="+cacheDir+"/apt/etc/trusted.gpg",
+				"-o", "Dir::Etc::preferences="+cacheDir+"/apt/etc/preferences",
 				"update",
 			).Return("Shell output", nil)
 
@@ -231,6 +253,7 @@ var _ = Describe("Apt", func() {
 				"-o", "dir::state="+cacheDir+"/apt/state",
 				"-o", "dir::etc::sourcelist="+cacheDir+"/apt/sources/sources.list",
 				"-o", "dir::etc::trusted="+cacheDir+"/apt/etc/trusted.gpg",
+				"-o", "Dir::Etc::preferences="+cacheDir+"/apt/etc/preferences",
 				"-y", "--force-yes", "-d", "install", "--reinstall",
 				"foo",
 				"bar",

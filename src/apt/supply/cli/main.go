@@ -14,10 +14,12 @@ import (
 func main() {
 	logger := libbuildpack.NewLogger(os.Stdout)
 
-	cmd := exec.Command("find", ".")
-	cmd.Dir = "/tmp/cache"
-	cmd.Stdout = os.Stdout
-	cmd.Run()
+	if os.Getenv("BP_DEBUG") != "" {
+		cmd := exec.Command("find", ".")
+		cmd.Dir = "/tmp/cache"
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	}
 
 	buildpackDir, err := libbuildpack.GetBuildpackDir()
 	if err != nil {
