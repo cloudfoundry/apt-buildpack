@@ -131,7 +131,7 @@ func (a *Apt) AddRepos() error {
 	}
 
 	if len(a.Priorities) > 0 {
-		prefFile, err := os.OpenFile(a.preferences, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+		prefFile, err := os.OpenFile(a.preferences, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
 		if err != nil {
 			return err
 		}
