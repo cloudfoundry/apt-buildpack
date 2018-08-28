@@ -139,7 +139,7 @@ func (s *Supplier) createSymlinks() error {
 					return err
 				}
 				newContents := strings.Replace(string(contents[:]), "prefix=/usr\n", "prefix=" + filepath.Join(s.Stager.DepDir(), "apt", "usr") + "\n", -1)
-				err = ioutil.WriteFile(filepath.Join(destDir, file.Name()), []byte(newContents), 0644)
+				err = ioutil.WriteFile(filepath.Join(destDir, file.Name()), []byte(newContents), 0666)
 				if err != nil {
 					return err
 				}
