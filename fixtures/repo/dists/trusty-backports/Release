@@ -1,0 +1,28 @@
+Origin: apt.example.com
+Label: apt backports repository
+Codename: trusty-backports
+Date: Tue, 12 Jun 2018 15:07:23 UTC
+Architectures: amd64
+Components: main
+Description: Fake debian backports package repo
+MD5Sum:
+ 1ebcb1864b88cdd2ee97ae388e568d80 2324 main/binary-amd64/Packages
+ ae0605bf8f4e427ddf60578ba1a7494f 956 main/binary-amd64/Packages.gz
+ 7b9ae2530c352f6e5e4e3d84c5a6d761 140 main/binary-amd64/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 main/source/Sources
+ 7029066c27ac6f5ef18d660d5741979a 20 main/source/Sources.gz
+ 06ede30ec1850662f9a99eba953dc377 141 main/source/Release
+SHA1:
+ 1b6d391be6514fab0dfbababa71e6f7153c89627 2324 main/binary-amd64/Packages
+ 11a690da9578be57af7188912cc5ee23da7a13da 956 main/binary-amd64/Packages.gz
+ c99a4128100ad55f94b175f235e1db8bc1886963 140 main/binary-amd64/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 main/source/Sources.gz
+ 3bfbb1c5a3485159b8d5c8745e9b0f2d6c51da66 141 main/source/Release
+SHA256:
+ 2150e6fae709a08582640254efdc398dafab5db534507963d8fcdf0df19b451b 2324 main/binary-amd64/Packages
+ 8e2db5a3355afdf5a115ac2311d0d37e49974177cc1da015f3cf2975329a4727 956 main/binary-amd64/Packages.gz
+ 2174fb542b2b6a6e6278268bbce61bec666cf419fc4f55ab236fdb092a2c258d 140 main/binary-amd64/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 main/source/Sources.gz
+ bb4df243678b4d3e41c14055ec746e389149e1772fe4447265536b32a168f9af 141 main/source/Release
