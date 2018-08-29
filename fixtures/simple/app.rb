@@ -10,5 +10,9 @@ server.mount_proc '/bosh' do |req, res|
   res.body = "BOSH: #{`bosh2 -v`}"
 end
 
+server.mount_proc '/zsh' do |req, res|
+  res.body = "zsh: #{`zsh --version`}"
+end
+
 trap("INT") { server.shutdown }
 server.start

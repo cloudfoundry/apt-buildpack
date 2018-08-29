@@ -1,0 +1,56 @@
+Package: zsh
+Version: 5.0.5-4ubuntu1~ubuntu14.04.1
+Architecture: amd64
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Installed-Size: 1837
+Depends: libc6 (>= 2.15), libcap2 (>= 2.10), libtinfo5, zsh-common (= 5.0.5-4ubuntu1~ubuntu14.04.1)
+Recommends: libncursesw5 (>= 5.6+20070908), libpcre3
+Suggests: zsh-doc
+Homepage: http://www.zsh.org/
+Priority: optional
+Section: shells
+Filename: pool/main/z/zsh/zsh_5.0.5-4ubuntu1~ubuntu14.04.1_amd64.deb
+Size: 611488
+SHA256: 02e0bafb93e6e9a8e32dcb80df5263c25fe8611aa1ec07fe505f95a7ee337043
+SHA1: 40509cbeb7980fd94a0469d3dd94bfab93fe4408
+MD5sum: 02262b8917991e90b3cd7b2aa313672a
+Description: shell with lots of features
+ Zsh is a UNIX command interpreter (shell) usable as an
+ interactive login shell and as a shell script command
+ processor. Of the standard shells, zsh most closely resembles
+ ksh but includes many enhancements. Zsh has command-line editing,
+ built-in spelling correction, programmable command completion,
+ shell functions (with autoloading), a history mechanism, and a
+ host of other features.
+Original-Maintainer: Debian Zsh Maintainers <pkg-zsh-devel@lists.alioth.debian.org>
+
+Package: zsh-common
+Source: zsh
+Version: 5.0.5-4ubuntu1~ubuntu14.04.1
+Architecture: all
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Installed-Size: 10427
+Recommends: zsh
+Suggests: zsh-doc
+Replaces: zsh (<= 5.0.2-1)
+Homepage: http://www.zsh.org/
+Priority: optional
+Section: shells
+Filename: pool/main/z/zsh/zsh-common_5.0.5-4ubuntu1~ubuntu14.04.1_all.deb
+Size: 2969158
+SHA256: ac6ec1e30fab88a53c27732642d3f77057420e781e5af9c5855a5a728bf086ee
+SHA1: 8180c2cf8f7a3cf7612046bd33803d026235e50c
+MD5sum: 9d62c1b4af5421617eb10451b7eaf096
+Description: architecture independent files for Zsh
+ Zsh is a UNIX command interpreter (shell) usable as an
+ interactive login shell and as a shell script command
+ processor. Of the standard shells, zsh most closely resembles
+ ksh but includes many enhancements. Zsh has command-line editing,
+ built-in spelling correction, programmable command completion,
+ shell functions (with autoloading), a history mechanism, and a
+ host of other features.
+ .
+ This package contains the common zsh files shared by all
+ architectures.
+Original-Maintainer: Debian Zsh Maintainers <pkg-zsh-devel@lists.alioth.debian.org>
+

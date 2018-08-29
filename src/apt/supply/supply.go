@@ -1,7 +1,10 @@
 package supply
 
 import (
+	"io/ioutil"
 	"path/filepath"
+	"os"
+	"strings"
 
 	"github.com/cloudfoundry/libbuildpack"
 )
@@ -98,9 +101,6 @@ func (s *Supplier) createSymlinks() error {
 		{"usr/lib/x86_64-linux-gnu", "lib"},
 		{"lib/x86_64-linux-gnu", "lib"},
 		{"usr/include", "include"},
-		{"usr/lib/i386-linux-gnu/pkgconfig", "pkgconfig"},
-		{"usr/lib/x86_64-linux-gnu/pkgconfig", "pkgconfig"},
-		{"usr/lib/pkgconfig", "pkgconfig"},
 	} {
 		dest := filepath.Join(s.Stager.DepDir(), "apt", dirs[0])
 		if exists, err := libbuildpack.FileExists(dest); err != nil {
@@ -111,5 +111,41 @@ func (s *Supplier) createSymlinks() error {
 			}
 		}
 	}
+
+	// copy pkgconfig files instead of linking, then modify
+	// the copies to point to the DepDir-based path
+
+	for _, dirs := range [][]string{
+		{"usr/lib/i386-linux-gnu/pkgconfig", "pkgconfig"},
+		{"usr/lib/x86_64-linux-gnu/pkgconfig", "pkgconfig"},
+		{"usr/lib/pkgconfig", "pkgconfig"},
+	} {
+		dest := filepath.Join(s.Stager.DepDir(), "apt", dirs[0])
+		if exists, err := libbuildpack.FileExists(dest); err != nil {
+			return err
+		} else if exists {
+			files, err := ioutil.ReadDir(dest)
+			if err != nil {
+				return err
+			}
+			destDir := filepath.Join(s.Stager.DepDir(), dirs[1])
+			if err := os.MkdirAll(destDir, 0755); err != nil {
+				return err
+			}
+			for _, file := range files {
+				//TODO: better way to copy a file?
+				contents, err := ioutil.ReadFile(filepath.Join(dest, file.Name()))
+				if err != nil {
+					return err
+				}
+				newContents := strings.Replace(string(contents[:]), "prefix=/usr\n", "prefix=" + filepath.Join(s.Stager.DepDir(), "apt", "usr") + "\n", -1)
+				err = ioutil.WriteFile(filepath.Join(destDir, file.Name()), []byte(newContents), 0666)
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+
 	return nil
 }

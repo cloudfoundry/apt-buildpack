@@ -1,0 +1,5 @@
+Component: main
+Origin: apt.example.com
+Label: apt backports repository
+Architecture: amd64
+Description: Fake debian backports package repo
