@@ -62,6 +62,7 @@ var _ = Describe("Apt supply buildpack", func() {
 			Expect(app.Stdout.String()).To(ContainSubstring("Installing apt packages"))
 			Expect(app.GetBody("/bosh")).To(ContainSubstring("BOSH: version 2"))
 			Expect(app.GetBody("/jq")).To(ContainSubstring("Jq: jq-1."))
+			Expect(app.GetBody("/zsh")).To(ContainSubstring("zsh 5.0.5"))
 		})
 	})
 
