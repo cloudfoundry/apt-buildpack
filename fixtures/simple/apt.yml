@@ -10,3 +10,4 @@ priorities:
 packages:
 - {{.repoBaseURL}}/pool/main/j/jq/jq_1.5_amd64.deb
 - bosh-cli
+- zsh/trusty-backports
