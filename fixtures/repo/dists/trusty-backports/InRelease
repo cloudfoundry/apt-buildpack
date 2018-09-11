@@ -1,0 +1,40 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Origin: apt.example.com
+Label: apt backports repository
+Codename: trusty-backports
+Date: Tue, 11 Sep 2018 20:31:34 UTC
+Architectures: amd64
+Components: main
+Description: Fake debian backports package repo
+MD5Sum:
+ c6c258969e2a7bc7ae972caf5a68a708 531 main/binary-amd64/Packages
+ 2f458b7e3f71ebd41171848fb063b991 389 main/binary-amd64/Packages.gz
+ 7b9ae2530c352f6e5e4e3d84c5a6d761 140 main/binary-amd64/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 main/source/Sources
+ 7029066c27ac6f5ef18d660d5741979a 20 main/source/Sources.gz
+ 06ede30ec1850662f9a99eba953dc377 141 main/source/Release
+SHA1:
+ 2d2a3fcd0760e218eb00a2a0faf4c68d3d5da970 531 main/binary-amd64/Packages
+ d2c8ed17abb2f3f7eaf84568fe846e4e28f1c74e 389 main/binary-amd64/Packages.gz
+ c99a4128100ad55f94b175f235e1db8bc1886963 140 main/binary-amd64/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 main/source/Sources
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 main/source/Sources.gz
+ 3bfbb1c5a3485159b8d5c8745e9b0f2d6c51da66 141 main/source/Release
+SHA256:
+ d1aa50ceaba2a3b8b91a12578513e380cd9ea278edca44b5c29d12d6cfe8e611 531 main/binary-amd64/Packages
+ ffc61eb843de77da2046d658c4cb625a3064e783fd7100ab7b34f1a2cbadfe63 389 main/binary-amd64/Packages.gz
+ 2174fb542b2b6a6e6278268bbce61bec666cf419fc4f55ab236fdb092a2c258d 140 main/binary-amd64/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 main/source/Sources
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 main/source/Sources.gz
+ bb4df243678b4d3e41c14055ec746e389149e1772fe4447265536b32a168f9af 141 main/source/Release
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iJwEAQECAAYFAluYJm4ACgkQbeHVitsesPbVWAP8D7HO+GA06PTZNGmK+RoHre/a
+N2+BXXgFTTsIUZPXMeoMEFISqM6DATh1WjGxuv0tekgTtaTrH1RgT07oAMwM5gak
+TLAcDbhxltxk5P/+B5EBOv+HJgozkdJAmTMEJxNZWdXhUtFf1Loslp5nucvOTRej
+MQydPlnPAiOTo3z+cK8=
+=RluJ
+-----END PGP SIGNATURE-----

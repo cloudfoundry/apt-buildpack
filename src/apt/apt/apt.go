@@ -10,25 +10,43 @@ import (
 )
 
 type Command interface {
-	// Execute(string, io.Writer, io.Writer, string, ...string) error
 	Output(string, string, ...string) (string, error)
-	// Run(*exec.Cmd) error
 }
 
-type RepoPriority struct {
-	Repository string
-	Priority   string
+type Repository struct {
+	Name     string
+	Priority string
+}
+
+func (r *Repository) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var name string
+	if err := unmarshal(&name); err == nil {
+		r.Name = name
+		return nil
+	}
+
+	data := struct {
+		Name     string
+		Priority string
+	}{}
+	err := unmarshal(&data)
+	if err != nil {
+		return err
+	}
+
+	r.Name = data.Name
+	r.Priority = data.Priority
+	return nil
 }
 
 type Apt struct {
 	command            Command
 	options            []string
 	aptFilePath        string
-	Keys               []string `yaml:"keys"`
-	GpgAdvancedOptions []string `yaml:"gpg_advanced_options"`
-	Repos              []string `yaml:"repos"`
-	Packages           []string `yaml:"packages"`
-	Priorities         []RepoPriority `yaml:"priorities"`
+	Keys               []string     `yaml:"keys"`
+	GpgAdvancedOptions []string     `yaml:"gpg_advanced_options"`
+	Repos              []Repository `yaml:"repos"`
+	Packages           []string     `yaml:"packages"`
 	cacheDir           string
 	stateDir           string
 	sourceList         string
@@ -125,20 +143,20 @@ func (a *Apt) AddRepos() error {
 	defer f.Close()
 
 	for _, repo := range a.Repos {
-		if _, err = f.WriteString("\n" + repo); err != nil {
+		if _, err = f.WriteString("\n" + repo.Name); err != nil {
 			return err
 		}
 	}
 
-	if len(a.Priorities) > 0 {
-		prefFile, err := os.OpenFile(a.preferences, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
-		if err != nil {
-			return err
-		}
-		defer prefFile.Close()
+	prefFile, err := os.OpenFile(a.preferences, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+	if err != nil {
+		return err
+	}
+	defer prefFile.Close()
 
-		for _, repoPriority := range a.Priorities {
-			if _, err = prefFile.WriteString("\nPackage: *\nPin: release a=" + repoPriority.Repository + "\nPin-Priority: " + repoPriority.Priority + "\n"); err != nil {
+	for _, repo := range a.Repos {
+		if repo.Priority != "" {
+			if _, err = prefFile.WriteString("\nPackage: *\nPin: release a=" + repo.Name + "\nPin-Priority: " + repo.Priority + "\n"); err != nil {
 				return err
 			}
 		}

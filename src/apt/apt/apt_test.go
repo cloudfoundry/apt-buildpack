@@ -2,28 +2,17 @@ package apt_test
 
 import (
 	"apt/apt"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/cloudfoundry/libbuildpack"
+	"github.com/cloudfoundry/libbuildpack/cutlass"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
-
-type AptRepoPriority struct {
-	Repository string
-	Priority   string
-}
-
-type AptYaml struct {
-	GpgAdvancedOptions []string `yaml:"gpg_advanced_options"`
-	Keys               []string `yaml:"keys"`
-	Repos              []string `yaml:"repos"`
-	Packages           []string `yaml:"packages"`
-	Priorities         []AptRepoPriority `yaml:"priorities"`
-}
 
 //go:generate mockgen -source=apt.go --destination=mocks_test.go --package=apt_test
 
@@ -36,11 +25,15 @@ var _ = Describe("Apt", func() {
 		cacheDir    string
 		installDir  string
 	)
+
 	BeforeEach(func() {
 		aptfileHandle, err := ioutil.TempFile("", "aptfile.yml")
 		Expect(err).ToNot(HaveOccurred())
 		Expect(aptfileHandle.Close()).To(Succeed())
 		aptfile = aptfileHandle.Name()
+		bpDir, err := cutlass.FindRoot()
+		Expect(err).NotTo(HaveOccurred())
+		aptfile = filepath.Join(bpDir, "fixtures", "unit", "aptfile.yml")
 
 		cacheDir, _ = ioutil.TempDir("", "cachedir")
 		installDir, _ = ioutil.TempDir("", "installdir")
@@ -48,9 +41,11 @@ var _ = Describe("Apt", func() {
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockCommand = NewMockCommand(mockCtrl)
 	})
+
 	JustBeforeEach(func() {
 		a = apt.New(mockCommand, aptfile, cacheDir, installDir)
 	})
+
 	AfterEach(func() {
 		os.Remove(aptfile)
 		os.RemoveAll(cacheDir)
@@ -59,39 +54,49 @@ var _ = Describe("Apt", func() {
 
 	Describe("Setup", func() {
 		JustBeforeEach(func() {
-			y := &AptYaml{
+			y := &apt.Apt{
 				GpgAdvancedOptions: []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"},
 				Keys:               []string{"https://example.com/public.key"},
-				Repos:              []string{"deb http://apt.example.com stable main"},
-				Packages:           []string{"abc", "def"},
-				Priorities:         []AptRepoPriority{{Repository: "stable", Priority: "101"}},
+				Repos: []apt.Repository{
+					apt.Repository{Name: "deb http://apt.example.com stable main"},
+					apt.Repository{Name: "foo bar baz", Priority: "100"},
+				},
+				Packages: []string{"abc", "def"},
 			}
 			Expect(libbuildpack.NewYAML().Write(aptfile, y)).To(Succeed())
+
 			Expect(a.Setup()).To(Succeed())
 		})
+
 		It("sets keys from apt.yml", func() {
 			Expect(a.Keys).To(Equal([]string{"https://example.com/public.key"}))
 		})
+
 		It("sets gpg advanced options from apt.yml", func() {
 			Expect(a.GpgAdvancedOptions).To(Equal([]string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"}))
 		})
-		It("sets repos from apt.yml", func() {
-			Expect(a.Repos).To(Equal([]string{"deb http://apt.example.com stable main"}))
+
+		It("sets repos with priority from apt.yml", func() {
+			Expect(a.Repos).To(Equal([]apt.Repository{
+				apt.Repository{Name: "deb http://apt.example.com stable main"},
+				apt.Repository{Name: "foo bar baz", Priority: "100"},
+			}))
 		})
+
 		It("sets packages from apt.yml", func() {
 			Expect(a.Packages).To(Equal([]string{"abc", "def"}))
 		})
-		It("sets priorities from apt.yml", func() {
-			Expect(a.Priorities).To(Equal([]apt.RepoPriority{{Repository: "stable", Priority: "101"}}))
-		})
+
 		It("copies sources.list", func() {
 			Expect(filepath.Join(cacheDir, "apt", "sources", "sources.list")).To(BeARegularFile())
 		})
+
 		It("copies trusted.gpg", func() {
 			Expect(filepath.Join(cacheDir, "apt", "etc", "trusted.gpg")).To(BeARegularFile())
 		})
+
 		It("copies preferences", func() {
-			Expect(filepath.Join(cacheDir, "apt", "etc", "preferences")).To(SatisfyAny(BeARegularFile(),Not(BeAnExistingFile())))
+			Expect(filepath.Join(cacheDir, "apt", "etc", "preferences")).To(SatisfyAny(BeARegularFile(), Not(BeAnExistingFile())))
 		})
 	})
 
@@ -146,6 +151,7 @@ var _ = Describe("Apt", func() {
 			JustBeforeEach(func() {
 				a.Keys = []string{"https://example.com/public.key"}
 			})
+
 			It("adds the keys to the apt trusted keys", func() {
 				mockCommand.EXPECT().Output(
 					"/", "apt-key",
@@ -163,6 +169,7 @@ var _ = Describe("Apt", func() {
 			JustBeforeEach(func() {
 				a.Keys = []string{}
 			})
+
 			It("does nothing", func() {
 				_, err := a.AddKeys()
 				Expect(err).ToNot(HaveOccurred())
@@ -171,20 +178,40 @@ var _ = Describe("Apt", func() {
 	})
 
 	Describe("AddRepos", func() {
-		Context("Keys have been specified", func() {
-			JustBeforeEach(func() {
-				a.Repos = []string{"repo 11", "repo 12"}
-			})
-			It("adds the repos to the apt sources list", func() {
-				sourceList := filepath.Join(cacheDir, "apt", "sources", "sources.list")
-				Expect(os.MkdirAll(filepath.Dir(sourceList), 0755)).To(Succeed())
-				Expect(ioutil.WriteFile(sourceList, []byte("repo 1\nrepo 2"), 0644)).To(Succeed())
+		Context("Keys and priorities have been specified", func() {
+			var sourceList, prefFile string
 
+			JustBeforeEach(func() {
+				a.Repos = []apt.Repository{
+					apt.Repository{Name: "repo 11"},
+					apt.Repository{Name: "repo 12", Priority: "99"},
+					apt.Repository{Name: "repo 13", Priority: "100"},
+				}
+
+				sourceList = filepath.Join(cacheDir, "apt", "sources", "sources.list")
+				Expect(os.MkdirAll(filepath.Dir(sourceList), 0777)).To(Succeed())
+				Expect(ioutil.WriteFile(sourceList, []byte("repo 1\nrepo 2"), 0666)).To(Succeed())
+
+				prefFile = filepath.Join(cacheDir, "apt", "etc", "preferences")
+				Expect(os.MkdirAll(filepath.Dir(prefFile), 0777)).To(Succeed())
+				Expect(ioutil.WriteFile(prefFile, []byte("Package: *\nPin: release a=repo 1\nPin-Priority"), 0666)).To(Succeed())
+			})
+
+			It("adds the repos to the apt sources list", func() {
 				Expect(a.AddRepos()).To(Succeed())
 
 				content, err := ioutil.ReadFile(sourceList)
 				Expect(err).ToNot(HaveOccurred())
-				Expect(string(content)).To(Equal("repo 1\nrepo 2\nrepo 11\nrepo 12"))
+				Expect(string(content)).To(Equal("repo 1\nrepo 2\nrepo 11\nrepo 12\nrepo 13"))
+			})
+
+			It("adds repo priorities to the preferences file", func() {
+				Expect(a.AddRepos()).To(Succeed())
+
+				content, err := ioutil.ReadFile(prefFile)
+				Expect(err).ToNot(HaveOccurred())
+				fmt.Println(string(content))
+				Expect(string(content)).To(Equal("Package: *\nPin: release a=repo 1\nPin-Priority\nPackage: *\nPin: release a=repo 12\nPin-Priority: 99\n\nPackage: *\nPin: release a=repo 13\nPin-Priority: 100\n"))
 			})
 		})
 
@@ -192,6 +219,7 @@ var _ = Describe("Apt", func() {
 			JustBeforeEach(func() {
 				a.Keys = []string{}
 			})
+
 			It("does nothing", func() {
 				_, err := a.AddKeys()
 				Expect(err).ToNot(HaveOccurred())
@@ -225,6 +253,7 @@ var _ = Describe("Apt", func() {
 		JustBeforeEach(func() {
 			a.Packages = []string{fooUrl, barUrl, "foo", "bar"}
 		})
+
 		It("downloads user specified packages", func() {
 			debCache := cacheDir + "/apt/cache/archives"
 
@@ -272,6 +301,7 @@ var _ = Describe("Apt", func() {
 			Expect(ioutil.WriteFile(filepath.Join(cacheDir, "apt", "cache", "archives", "holiday.deb"), []byte{}, 0644)).To(Succeed())
 			Expect(ioutil.WriteFile(filepath.Join(cacheDir, "apt", "cache", "archives", "disneyland.deb"), []byte{}, 0644)).To(Succeed())
 		})
+
 		It("installs the downloaded debs", func() {
 			mockCommand.EXPECT().Output("/", "dpkg", "-x", filepath.Join(cacheDir, "apt", "cache", "archives", "holiday.deb"), installDir)
 			mockCommand.EXPECT().Output("/", "dpkg", "-x", filepath.Join(cacheDir, "apt", "cache", "archives", "disneyland.deb"), installDir)

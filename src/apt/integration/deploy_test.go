@@ -58,11 +58,20 @@ var _ = Describe("Apt supply buildpack", func() {
 
 		It("supplies apt packages to later buildpacks", func() {
 			PushAppAndConfirm(app)
-
 			Expect(app.Stdout.String()).To(ContainSubstring("Installing apt packages"))
+
+			By("authenticating the apt packages")
+			Expect(app.Stdout.String()).NotTo(ContainSubstring("The following packages cannot be authenticated"))
+
+			By("installing packages from the default repo")
 			Expect(app.GetBody("/bosh")).To(ContainSubstring("BOSH: version 2"))
+
+			By("installing packages from a specific file location")
 			Expect(app.GetBody("/jq")).To(ContainSubstring("Jq: jq-1."))
-			Expect(app.GetBody("/zsh")).To(ContainSubstring("zsh 5.0.5"))
+
+			By("installing a package from a specific repository with a lower priority")
+			Expect(app.Stdout.String()).To(MatchRegexp("Get:.* trusty-backports/main cf-cli"))
+			Expect(app.GetBody("/cf")).To(ContainSubstring("cf version 6.38.0+7ddf0aadd.2018-08-07"))
 		})
 	})
 
