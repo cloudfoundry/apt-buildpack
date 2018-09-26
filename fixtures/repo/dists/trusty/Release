@@ -1,7 +1,7 @@
 Origin: apt.example.com
 Label: apt repository
 Codename: trusty
-Date: Mon, 30 Oct 2017 18:52:32 UTC
+Date: Wed, 26 Sep 2018 19:41:59 UTC
 Architectures: amd64
 Components: main
 Description: Fake debian package repo

@@ -12,6 +12,7 @@ import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/ghttp"
 )
 
 //go:generate mockgen -source=apt.go --destination=mocks_test.go --package=apt_test
@@ -92,7 +93,11 @@ var _ = Describe("Apt", func() {
 		})
 
 		It("copies trusted.gpg", func() {
-			Expect(filepath.Join(cacheDir, "apt", "etc", "trusted.gpg")).To(BeARegularFile())
+			copiedFile, err := libbuildpack.FileExists(filepath.Join(cacheDir, "apt", "etc", "trusted.gpg"))
+			Expect(err).ToNot(HaveOccurred())
+			copiedDir, err := libbuildpack.FileExists(filepath.Join(cacheDir, "apt", "etc", "trusted.gpg.d"))
+			Expect(err).ToNot(HaveOccurred())
+			Expect(copiedFile || copiedDir).To(BeTrue())
 		})
 
 		It("copies preferences", func() {
@@ -247,34 +252,35 @@ var _ = Describe("Apt", func() {
 	})
 
 	Describe("Download", func() {
-		fooUrl := "http://example.com/foo.deb"
-		barUrl := "http://example.com/bar.deb"
+		fooFileName := "foo.deb"
+		barFileName := "bar.deb"
+		var fooServer *ghttp.Server
+		var barServer *ghttp.Server
 
 		JustBeforeEach(func() {
-			a.Packages = []string{fooUrl, barUrl, "foo", "bar"}
+			fooServer = ghttp.NewServer()
+			barServer = ghttp.NewServer()
+
+			fooServer.AppendHandlers(
+				ghttp.VerifyRequest("GET", "/"+fooFileName),
+			)
+			barServer.AppendHandlers(
+				ghttp.VerifyRequest("GET", "/"+barFileName),
+			)
+			fooFileUri := fooServer.URL() + "/" + fooFileName
+			barFileUri := barServer.URL() + "/" + barFileName
+
+			a.Packages = []string{fooFileUri,barFileUri}
 		})
 
-		It("downloads user specified packages", func() {
-			debCache := cacheDir + "/apt/cache/archives"
+		AfterEach(func(){
+			fooServer.Close()
+			barServer.Close()
 
-			// downloads deb files individually via curl
-			packageFile := debCache + "/foo.deb"
-			mockCommand.EXPECT().Output(
-				"/", "curl", "-s", "-L",
-				"-z", packageFile,
-				"-o", packageFile,
-				fooUrl,
-			).Return("curl output", nil)
+		})
 
-			packageFile = debCache + "/bar.deb"
-			mockCommand.EXPECT().Output(
-				"/", "curl", "-s", "-L",
-				"-z", packageFile,
-				"-o", packageFile,
-				barUrl,
-			).Return("curl output", nil)
+		It("downloads user specified packages using http get's", func() {
 
-			// downloads all packages in one go
 			mockCommand.EXPECT().Output(
 				"/", "apt-get",
 				"-o", "debug::nolocking=true",
@@ -284,12 +290,14 @@ var _ = Describe("Apt", func() {
 				"-o", "dir::etc::trusted="+cacheDir+"/apt/etc/trusted.gpg",
 				"-o", "Dir::Etc::preferences="+cacheDir+"/apt/etc/preferences",
 				"-y", "--force-yes", "-d", "install", "--reinstall",
-				"foo",
-				"bar",
 			).Return("apt output", nil)
 
 			Expect(a.Download()).To(Equal(""))
+			Expect(fooServer.ReceivedRequests()).Should(HaveLen(1))
+			Expect(barServer.ReceivedRequests()).Should(HaveLen(1))
+
 		})
+
 	})
 
 	Describe("Install", func() {

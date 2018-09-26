@@ -1,10 +1,10 @@
 -----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hash: SHA512
 
 Origin: apt.example.com
 Label: apt backports repository
 Codename: trusty-backports
-Date: Tue, 11 Sep 2018 20:31:34 UTC
+Date: Wed, 26 Sep 2018 19:44:55 UTC
 Architectures: amd64
 Components: main
 Description: Fake debian backports package repo
@@ -30,11 +30,18 @@ SHA256:
  59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 main/source/Sources.gz
  bb4df243678b4d3e41c14055ec746e389149e1772fe4447265536b32a168f9af 141 main/source/Release
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iJwEAQECAAYFAluYJm4ACgkQbeHVitsesPbVWAP8D7HO+GA06PTZNGmK+RoHre/a
-N2+BXXgFTTsIUZPXMeoMEFISqM6DATh1WjGxuv0tekgTtaTrH1RgT07oAMwM5gak
-TLAcDbhxltxk5P/+B5EBOv+HJgozkdJAmTMEJxNZWdXhUtFf1Loslp5nucvOTRej
-MQydPlnPAiOTo3z+cK8=
-=RluJ
+iQIzBAEBCgAdFiEE21xCt4faqsVnFIfwWByTmIu9D+cFAlur4bcACgkQWByTmIu9
+D+eG2A/9EnrI7+5phpSvG/JX/4xR3a6+UT4PSB2RmgNcDQptJ1OEfZH8n0bfBRzZ
+0zsLDX0rG2UIzbVCCB1Fa9fd9+SCaDfK541OnLk8BMbp7MJnaUvkpRmZ44zhy1+l
+exJYYo1ASaeKIdc+XJcLf42iaxO7JIDx5gu04XdRAGSXD4v5MkuGG96EnQNKMpZO
+JO3f2UQiKhvHpicJEz+yvRkaxQ8CDzL9IfO5TD/knfxGW/N3IdEf5QRCvPbT4tMZ
+5GdZE86pfaIiklChahHTHQbZCFEcaU2sSN6hsOyxYIf1a+5jO/C80LF9uY6NaZAB
+PyGZ/LoanIa4VINcgI9iceDrBweYZvp+kfyZjqLuAMT7HfMdsiPZcRoHdveRvYh7
+gojp5+fPMiExaVcVW80KkhouGSGOgYcaTGjsK80ydpMHUorMNB3kEa/PjFI+u1gr
+zZekP3akFyE2s9AyJVVMnTOm+1avPKcnPgX09hWC/+PW7ulraCKG5xq2UPHXFGhx
+h12pdljiycE405Hc6hW4RD5a1cAqgF+/19pafn6HQkU2Sb3rzHIRj8dL438gT93W
+Fw2AvpC7GkLpkqBAUN/jFLNpM7ytC1u02pQrXtY9c8E1SXT9alMzlaj1hNPvAn4h
+wXAgv4xRBPHMuHP4pGN9QA13X+S2wKrN5Gvhzz3ifB2u8Tz20gs=
+=AeNo
 -----END PGP SIGNATURE-----

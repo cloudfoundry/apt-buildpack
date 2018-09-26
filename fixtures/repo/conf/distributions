@@ -4,7 +4,7 @@ Codename: trusty
 Architectures: amd64 source
 Components: main
 Description: Fake debian package repo
-SignWith: yes
+SignWith: DB5C42B787DAAAC5671487F0581C93988BBD0FE7
 Pull: trusty
 
 Origin: apt.example.com
@@ -13,4 +13,5 @@ Codename: trusty-backports
 Architectures: amd64 source
 Components: main
 Description: Fake debian backports package repo
+SignWith: DB5C42B787DAAAC5671487F0581C93988BBD0FE7
 Pull: trusty-backports

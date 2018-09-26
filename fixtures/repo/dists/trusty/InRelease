@@ -1,10 +1,10 @@
 -----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+Hash: SHA512
 
 Origin: apt.example.com
 Label: apt repository
 Codename: trusty
-Date: Mon, 30 Oct 2017 18:52:32 UTC
+Date: Wed, 26 Sep 2018 19:41:59 UTC
 Architectures: amd64
 Components: main
 Description: Fake debian package repo
@@ -30,11 +30,18 @@ SHA256:
  59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 main/source/Sources.gz
  1e2c8e7236b34283865c60f11ee3a96382b66167f0dde826b9f8f24bbab1c811 121 main/source/Release
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iJwEAQECAAYFAluYHy0ACgkQbeHVitsesPasEwQAmNVpEyw7uPlt6BoFvRUU5kO7
-g64HSnUkmIUB/bztOpMfbnu6+PFv7OqjuY6plQ1DdVUpn0pps16fv9oj5O/z08nD
-8mBwZX/+eXCiJ1/4irIMAkjCbcEeozLyZNv5H5KXO+lNEEBd2HwVcZf06DgLeawb
-ygLERz8dGPHrCk0cqTg=
-=OzQ0
+iQIzBAEBCgAdFiEE21xCt4faqsVnFIfwWByTmIu9D+cFAlur4QcACgkQWByTmIu9
+D+c4uw//RxnkjVDYX5Epr0HQSS1o4BnGex8kO/wByVo8WtaN4ozIdQk6pycf1MQY
+Zw+t+BQ7r+JjGgFK/q/VCnfCaI9kYVkjpHe0oBCbbwbI40ZbqEZLCWw2LYEaIqCo
+NfugmNiiYu0y1q73fIyKchOtdHnb+f9dl2NLEr6krlG3lJABp42gJpIfUPmJP9/a
+FBI37T+kART82XYjXaCc4LD1rX6scUnrkP3UDjVZ9+RAp1qiiqSlv4SObiMRI3fA
+XohE4Wk6gMLwZmllC9M1CgL3hjA8CVJ3bYwBdeTwYKR9mpOv4NRwWgSf2Cuu2IYd
+28dftOOMkn6VOagvXbCjoaBrB7fstanD0PKkSgrfclyEU1F8RVveAxDpsVp37FLE
+6X/WnSe1zVIbuyWEq54+u0CgOEaCJ8cPMejphGL4EVu5AQ1GL/INJN8oJimk12UT
+A13Id6UOgs4f/LEvuhm6gSzWjxHq+Q92hWHo8yiE5qBooxocwgWMeKyP9wpZ+xP4
+ORMvOEn+W19KPO++UTqhMbKnzOmRIVqMkg81ajtnQ2EZD9QrFChfZ6B9TGF5x7Bn
+gtaWkN9o/o2mD/uJyu8tXwW50nk3d24o6THP+Ngy5AaaGVRwAsyh8DTceviXeaah
+p9leO/0VpgWn/gVt1D0E6VHAwUUUuOfJD5G75hHS/rjd5TU5rPc=
+=GALc
 -----END PGP SIGNATURE-----

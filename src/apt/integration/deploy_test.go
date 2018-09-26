@@ -70,7 +70,7 @@ var _ = Describe("Apt supply buildpack", func() {
 			Expect(app.GetBody("/jq")).To(ContainSubstring("Jq: jq-1."))
 
 			By("installing a package from a specific repository with a lower priority")
-			Expect(app.Stdout.String()).To(MatchRegexp("Get:.* trusty-backports/main cf-cli"))
+			Expect(app.Stdout.String()).To(MatchRegexp("Get:.* trusty-backports/main.*cf-cli"))
 			Expect(app.GetBody("/cf")).To(ContainSubstring("cf version 6.38.0+7ddf0aadd.2018-08-07"))
 		})
 	})

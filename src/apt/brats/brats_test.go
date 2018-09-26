@@ -9,6 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/cloudfoundry/libbuildpack/bratshelper"
 )
 
 var _ = Describe("Apt supply buildpack", func() {
@@ -18,6 +19,7 @@ var _ = Describe("Apt supply buildpack", func() {
 		appDir string
 		err    error
 	)
+
 	AfterEach(func() {
 		app = DestroyApp(app)
 		repo = DestroyApp(repo)
@@ -26,18 +28,18 @@ var _ = Describe("Apt supply buildpack", func() {
 
 	Context("Unbuilt buildpack (eg github)", func() {
 		BeforeEach(func() {
-			repo = cutlass.New(filepath.Join(bpDir, "fixtures", "repo"))
+			repo = cutlass.New(filepath.Join(bratshelper.Data.BpDir, "fixtures", "repo"))
 			repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
 			PushApp(repo)
 
-			appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", "simple"))
+			appDir, err = cutlass.CopyFixture(filepath.Join(bratshelper.Data.BpDir, "fixtures", "simple"))
 			Expect(err).NotTo(HaveOccurred())
 
 			repoBaseUrl, err := repo.GetUrl("/")
 			Expect(err).NotTo(HaveOccurred())
 
 			aptYamlTemplate := template.New("apt.yml")
-			_, err = aptYamlTemplate.ParseFiles(filepath.Join(bpDir, "fixtures", "simple", "apt.yml"))
+			_, err = aptYamlTemplate.ParseFiles(filepath.Join(bratshelper.Data.BpDir, "fixtures", "simple", "apt.yml"))
 			Expect(err).ToNot(HaveOccurred())
 
 			aptYaml, err := os.Create(filepath.Join(appDir, "apt.yml"))
@@ -46,7 +48,7 @@ var _ = Describe("Apt supply buildpack", func() {
 			Expect(aptYaml.Close()).To(Succeed())
 
 			app = cutlass.New(appDir)
-			app.Buildpacks = []string{buildpacks.Unbuilt, "https://github.com/cloudfoundry/binary-buildpack#master"}
+			app.Buildpacks = []string{bratshelper.Data.Uncached, "https://github.com/cloudfoundry/binary-buildpack#master"}
 		})
 
 		It("runs", func() {

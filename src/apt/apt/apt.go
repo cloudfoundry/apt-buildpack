@@ -5,8 +5,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
 	"github.com/cloudfoundry/libbuildpack"
+	"time"
+	"net/http"
+	"io"
 )
 
 type Command interface {
@@ -93,8 +95,12 @@ func (a *Apt) Setup() error {
 		return err
 	}
 
-	if err := libbuildpack.CopyFile("/etc/apt/trusted.gpg", a.trustedKeys); err != nil {
+	if exists, err := libbuildpack.FileExists("/etc/apt/trusted.gpg"); err != nil {
 		return err
+	} else if exists {
+		if err := libbuildpack.CopyFile("/etc/apt/trusted.gpg", a.trustedKeys); err != nil {
+			return err
+		}
 	}
 
 	if exists, err := libbuildpack.FileExists("/etc/apt/preferences"); err != nil {
@@ -182,12 +188,58 @@ func (a *Apt) Download() (string, error) {
 		}
 	}
 
+	archiveDir := filepath.Join(a.cacheDir, "archives")
+	if err := os.MkdirAll(archiveDir, os.ModePerm); err != nil {
+		return "", err
+	}
+
 	// download .deb packages individually
 	for _, pkg := range debPackages {
-		packageFile := filepath.Join(a.cacheDir, "archives", filepath.Base(pkg))
-		args := []string{"-s", "-L", "-z", packageFile, "-o", packageFile, pkg}
-		if output, err := a.command.Output("/", "curl", args...); err != nil {
-			return output, err
+		fmt.Println("HERE $")
+		var last_mod_local time.Time
+		exists, err := libbuildpack.FileExists(filepath.Join(archiveDir, filepath.Base(pkg)))
+		if err != nil {
+			return "", err
+		}
+		packageFile, err := os.OpenFile(filepath.Join(archiveDir, filepath.Base(pkg)), os.O_RDWR|os.O_CREATE, os.ModePerm)
+		if err != nil {
+			return "", err
+		}
+
+		if exists {
+			local_file_stat, err := packageFile.Stat()
+			if err != nil {
+				return "", err
+			}
+			last_mod_local = local_file_stat.ModTime()
+		} else {
+			last_mod_local = time.Time{}
+		}
+		resp, err := http.Get(pkg)
+		if err != nil {
+			return "", err
+		}
+		last_mod_remote, err := http.ParseTime(resp.Header.Get("last-modified"))
+		if err != nil { // handle ParseTime error on invalid last-modified headers
+			if _, ok := err.(*time.ParseError); ok {
+				last_mod_remote = time.Now()
+			} else {
+				return "", err
+			}
+		}
+		diff := last_mod_remote.Sub(last_mod_local)
+		if (diff >= 0) {
+			if n, err := io.Copy(packageFile, resp.Body); err != nil {
+				resp.Body.Close()
+				packageFile.Close()
+				return "", err
+			} else if n < resp.ContentLength {
+				resp.Body.Close()
+				packageFile.Close()
+				return "", fmt.Errorf("could only write %d bytes of total %d for pkg %s", n, resp.ContentLength, packageFile.Name())
+			}
+			resp.Body.Close()
+			packageFile.Close()
 		}
 	}
 
