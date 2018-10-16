@@ -2,13 +2,14 @@ package apt
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
-	"github.com/cloudfoundry/libbuildpack"
 	"time"
-	"net/http"
-	"io"
+
+	"github.com/cloudfoundry/libbuildpack"
 )
 
 type Command interface {
@@ -195,7 +196,6 @@ func (a *Apt) Download() (string, error) {
 
 	// download .deb packages individually
 	for _, pkg := range debPackages {
-		fmt.Println("HERE $")
 		var last_mod_local time.Time
 		exists, err := libbuildpack.FileExists(filepath.Join(archiveDir, filepath.Base(pkg)))
 		if err != nil {
@@ -228,7 +228,7 @@ func (a *Apt) Download() (string, error) {
 			}
 		}
 		diff := last_mod_remote.Sub(last_mod_local)
-		if (diff >= 0) {
+		if diff >= 0 {
 			if n, err := io.Copy(packageFile, resp.Body); err != nil {
 				resp.Body.Close()
 				packageFile.Close()
