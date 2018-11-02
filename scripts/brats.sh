@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export ROOT="$( dirname "${BASH_SOURCE[0]}" )/.."
-if [ ! -f "$ROOT/.bin/ginkgo" ]; then
-  (cd "$ROOT/src/apt/vendor/github.com/onsi/ginkgo/ginkgo/" && go install)
-fi
+cd "$( dirname "${BASH_SOURCE[0]}" )/.."
+source .envrc
+./scripts/install_tools.sh
 
 GINKGO_NODES=${GINKGO_NODES:-3}
-GINKGO_ATTEMPTS=${GINKGO_ATTEMPTS:-1}
+GINKGO_ATTEMPTS=${GINKGO_ATTEMPTS:-2}
 export CF_STACK=${CF_STACK:-cflinuxfs2}
 
-cd $ROOT/src/apt/brats
+cd src/*/brats
+
+echo "Run Buildpack Runtime Acceptance Tests"
 ginkgo -r --flakeAttempts=$GINKGO_ATTEMPTS -nodes $GINKGO_NODES
