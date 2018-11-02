@@ -5,5 +5,5 @@ cd "$( dirname "${BASH_SOURCE[0]}" )/.."
 source .envrc
 ./scripts/install_tools.sh
 
-src/*/integration/..
+cd src/*/integration/..
 ginkgo -r -skipPackage=brats,integration
