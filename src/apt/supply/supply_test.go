@@ -1,10 +1,11 @@
 package supply_test
 
 import (
-	"apt/supply"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	supply "github.com/cloudfoundry/apt-buildpack/src/apt/supply"
 
 	"bytes"
 

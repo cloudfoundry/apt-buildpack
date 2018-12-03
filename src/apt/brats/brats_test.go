@@ -7,9 +7,9 @@ import (
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
+	"github.com/cloudfoundry/libbuildpack/bratshelper"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/libbuildpack/bratshelper"
 )
 
 var _ = Describe("Apt supply buildpack", func() {

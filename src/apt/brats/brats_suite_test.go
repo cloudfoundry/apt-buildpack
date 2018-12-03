@@ -6,11 +6,12 @@ import (
 	"testing"
 	"time"
 
+	"strings"
+
+	"github.com/cloudfoundry/libbuildpack/bratshelper"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/cloudfoundry/libbuildpack/bratshelper"
-	"strings"
 )
 
 func init() {

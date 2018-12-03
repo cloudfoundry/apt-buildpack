@@ -1,11 +1,12 @@
 package apt_test
 
 import (
-	"apt/apt"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	apt "github.com/cloudfoundry/apt-buildpack/src/apt/apt"
 
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
@@ -270,10 +271,10 @@ var _ = Describe("Apt", func() {
 			fooFileUri := fooServer.URL() + "/" + fooFileName
 			barFileUri := barServer.URL() + "/" + barFileName
 
-			a.Packages = []string{fooFileUri,barFileUri}
+			a.Packages = []string{fooFileUri, barFileUri}
 		})
 
-		AfterEach(func(){
+		AfterEach(func() {
 			fooServer.Close()
 			barServer.Close()
 
