@@ -1,12 +1,13 @@
 package main
 
 import (
-	"apt/apt"
-	"apt/supply"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
+
+	apt "github.com/cloudfoundry/apt-buildpack/src/apt/apt"
+	supply "github.com/cloudfoundry/apt-buildpack/src/apt/supply"
 
 	"github.com/cloudfoundry/libbuildpack"
 )

@@ -2,8 +2,8 @@ package supply
 
 import (
 	"io/ioutil"
-	"path/filepath"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/cloudfoundry/libbuildpack"
@@ -138,7 +138,7 @@ func (s *Supplier) createSymlinks() error {
 				if err != nil {
 					return err
 				}
-				newContents := strings.Replace(string(contents[:]), "prefix=/usr\n", "prefix=" + filepath.Join(s.Stager.DepDir(), "apt", "usr") + "\n", -1)
+				newContents := strings.Replace(string(contents[:]), "prefix=/usr\n", "prefix="+filepath.Join(s.Stager.DepDir(), "apt", "usr")+"\n", -1)
 				err = ioutil.WriteFile(filepath.Join(destDir, file.Name()), []byte(newContents), 0666)
 				if err != nil {
 					return err
