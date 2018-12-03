@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	supply "github.com/cloudfoundry/apt-buildpack/src/apt/supply"
+	"github.com/cloudfoundry/apt-buildpack/src/apt/supply"
 
 	"bytes"
 
