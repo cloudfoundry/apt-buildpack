@@ -1,12 +1,11 @@
 package apt_test
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	apt "github.com/cloudfoundry/apt-buildpack/src/apt/apt"
+	"github.com/cloudfoundry/apt-buildpack/src/apt/apt"
 
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
@@ -21,42 +20,45 @@ import (
 var _ = Describe("Apt", func() {
 	var (
 		a           *apt.Apt
-		aptfile     string
+		aptFile     string
 		mockCtrl    *gomock.Controller
 		mockCommand *MockCommand
+		rootDir     string
 		cacheDir    string
 		installDir  string
 	)
 
 	BeforeEach(func() {
-		aptfileHandle, err := ioutil.TempFile("", "aptfile.yml")
-		Expect(err).ToNot(HaveOccurred())
-		Expect(aptfileHandle.Close()).To(Succeed())
-		aptfile = aptfileHandle.Name()
 		bpDir, err := cutlass.FindRoot()
 		Expect(err).NotTo(HaveOccurred())
-		aptfile = filepath.Join(bpDir, "fixtures", "unit", "aptfile.yml")
 
+		aptFile = filepath.Join(bpDir, "fixtures", "unit", "aptFile.yml")
+		rootDir, _ = ioutil.TempDir("", "rootdir")
 		cacheDir, _ = ioutil.TempDir("", "cachedir")
 		installDir, _ = ioutil.TempDir("", "installdir")
+
+		ioutil.WriteFile(filepath.Join(rootDir, "sources.list"), []byte(""), 0666)
+		ioutil.WriteFile(filepath.Join(rootDir, "trusted.gpg"), []byte(""), 0666)
+		ioutil.WriteFile(filepath.Join(rootDir, "preferences"), []byte(""), 0666)
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockCommand = NewMockCommand(mockCtrl)
 	})
 
 	JustBeforeEach(func() {
-		a = apt.New(mockCommand, aptfile, cacheDir, installDir)
+		a = apt.New(mockCommand, aptFile, rootDir, cacheDir, installDir)
 	})
 
 	AfterEach(func() {
-		os.Remove(aptfile)
+		os.Remove(aptFile)
 		os.RemoveAll(cacheDir)
+		os.RemoveAll(installDir)
 		mockCtrl.Finish()
 	})
 
 	Describe("Setup", func() {
 		JustBeforeEach(func() {
-			y := &apt.Apt{
+			content := &apt.Apt{
 				GpgAdvancedOptions: []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"},
 				Keys:               []string{"https://example.com/public.key"},
 				Repos: []apt.Repository{
@@ -65,7 +67,7 @@ var _ = Describe("Apt", func() {
 				},
 				Packages: []string{"abc", "def"},
 			}
-			Expect(libbuildpack.NewYAML().Write(aptfile, y)).To(Succeed())
+			Expect(libbuildpack.NewYAML().Write(aptFile, content)).To(Succeed())
 
 			Expect(a.Setup()).To(Succeed())
 		})
@@ -148,7 +150,7 @@ var _ = Describe("Apt", func() {
 					"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54",
 				).Return("Shell output", nil)
 
-				_, err := a.AddKeys()
+				err := a.AddKeys()
 				Expect(err).ToNot(HaveOccurred())
 			})
 		})
@@ -166,7 +168,7 @@ var _ = Describe("Apt", func() {
 					"--fetch-keys", "https://example.com/public.key",
 				).Return("Shell output", nil)
 
-				_, err := a.AddKeys()
+				err := a.AddKeys()
 				Expect(err).ToNot(HaveOccurred())
 			})
 		})
@@ -177,7 +179,7 @@ var _ = Describe("Apt", func() {
 			})
 
 			It("does nothing", func() {
-				_, err := a.AddKeys()
+				err := a.AddKeys()
 				Expect(err).ToNot(HaveOccurred())
 			})
 		})
@@ -216,7 +218,6 @@ var _ = Describe("Apt", func() {
 
 				content, err := ioutil.ReadFile(prefFile)
 				Expect(err).ToNot(HaveOccurred())
-				fmt.Println(string(content))
 				Expect(string(content)).To(Equal("Package: *\nPin: release a=repo 1\nPin-Priority\nPackage: *\nPin: release a=repo 12\nPin-Priority: 99\n\nPackage: *\nPin: release a=repo 13\nPin-Priority: 100\n"))
 			})
 		})
@@ -227,7 +228,7 @@ var _ = Describe("Apt", func() {
 			})
 
 			It("does nothing", func() {
-				_, err := a.AddKeys()
+				err := a.AddKeys()
 				Expect(err).ToNot(HaveOccurred())
 			})
 		})
@@ -246,30 +247,44 @@ var _ = Describe("Apt", func() {
 				"update",
 			).Return("Shell output", nil)
 
-			output, err := a.Update()
+			err := a.Update()
 			Expect(err).ToNot(HaveOccurred())
-			Expect(output).To(Equal("Shell output"))
 		})
 	})
 
-	Describe("Download", func() {
-		fooFileName := "foo.deb"
-		barFileName := "bar.deb"
-		var fooServer *ghttp.Server
-		var barServer *ghttp.Server
+	Describe("DownloadAll", func() {
+		var (
+			fooFileName = "foo.deb"
+			barFileName = "bar.deb"
+			fooServer   *ghttp.Server
+			barServer   *ghttp.Server
+		)
 
 		JustBeforeEach(func() {
 			fooServer = ghttp.NewServer()
-			barServer = ghttp.NewServer()
-
 			fooServer.AppendHandlers(
 				ghttp.VerifyRequest("GET", "/"+fooFileName),
 			)
+			fooFileUri := fooServer.URL() + "/" + fooFileName
+
+			barServer = ghttp.NewServer()
 			barServer.AppendHandlers(
 				ghttp.VerifyRequest("GET", "/"+barFileName),
 			)
-			fooFileUri := fooServer.URL() + "/" + fooFileName
 			barFileUri := barServer.URL() + "/" + barFileName
+
+			content := &apt.Apt{
+				GpgAdvancedOptions: []string{"--keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54"},
+				Keys:               []string{"https://example.com/public.key"},
+				Repos: []apt.Repository{
+					apt.Repository{Name: "deb http://apt.example.com stable main"},
+					apt.Repository{Name: "foo bar baz", Priority: "100"},
+				},
+				Packages: []string{"abc", "def"},
+			}
+			Expect(libbuildpack.NewYAML().Write(aptFile, content)).To(Succeed())
+
+			Expect(a.Setup()).To(Succeed())
 
 			a.Packages = []string{fooFileUri, barFileUri}
 		})
@@ -277,11 +292,9 @@ var _ = Describe("Apt", func() {
 		AfterEach(func() {
 			fooServer.Close()
 			barServer.Close()
-
 		})
 
 		It("downloads user specified packages using http get's", func() {
-
 			mockCommand.EXPECT().Output(
 				"/", "apt-get",
 				"-o", "debug::nolocking=true",
@@ -293,15 +306,14 @@ var _ = Describe("Apt", func() {
 				"-y", "--force-yes", "-d", "install", "--reinstall",
 			).Return("apt output", nil)
 
-			Expect(a.Download()).To(Equal(""))
+			Expect(a.DownloadAll()).To(Succeed())
 			Expect(fooServer.ReceivedRequests()).Should(HaveLen(1))
 			Expect(barServer.ReceivedRequests()).Should(HaveLen(1))
-
 		})
 
 	})
 
-	Describe("Install", func() {
+	Describe("InstallAll", func() {
 		BeforeEach(func() {
 			var err error
 			cacheDir, err = ioutil.TempDir("", "cachedir")
@@ -314,7 +326,7 @@ var _ = Describe("Apt", func() {
 		It("installs the downloaded debs", func() {
 			mockCommand.EXPECT().Output("/", "dpkg", "-x", filepath.Join(cacheDir, "apt", "cache", "archives", "holiday.deb"), installDir)
 			mockCommand.EXPECT().Output("/", "dpkg", "-x", filepath.Join(cacheDir, "apt", "cache", "archives", "disneyland.deb"), installDir)
-			Expect(a.Install()).To(Equal(""))
+			Expect(a.InstallAll()).To(Succeed())
 		})
 	})
 })

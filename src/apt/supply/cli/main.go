@@ -56,7 +56,7 @@ func main() {
 	}
 
 	command := &libbuildpack.Command{}
-	a := apt.New(command, filepath.Join(stager.BuildDir(), "apt.yml"), stager.CacheDir(), filepath.Join(stager.DepDir(), "apt"))
+	a := apt.New(command, filepath.Join(stager.BuildDir(), "apt.yml"), "/etc/apt", stager.CacheDir(), filepath.Join(stager.DepDir(), "apt"))
 	if err := a.Setup(); err != nil {
 		logger.Error("Unable to initialize apt package: %s", err.Error())
 		os.Exit(13)
@@ -65,6 +65,7 @@ func main() {
 	supplier := supply.New(stager, a, logger)
 
 	if err := supplier.Run(); err != nil {
+		logger.Error("Error running supply: %s", err.Error())
 		os.Exit(14)
 	}
 

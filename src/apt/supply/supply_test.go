@@ -56,8 +56,8 @@ var _ = Describe("Supply", func() {
 		mockApt.EXPECT().HasKeys().AnyTimes()
 		mockApt.EXPECT().HasRepos().AnyTimes()
 		mockApt.EXPECT().Update().AnyTimes()
-		mockApt.EXPECT().Download().AnyTimes()
-		mockApt.EXPECT().Install().AnyTimes()
+		mockApt.EXPECT().DownloadAll().AnyTimes()
+		mockApt.EXPECT().InstallAll().AnyTimes()
 	}
 
 	allowAllDepLinkingMethods := func() {
@@ -71,8 +71,8 @@ var _ = Describe("Supply", func() {
 				mockApt.EXPECT().HasKeys(),
 				mockApt.EXPECT().HasRepos(),
 				mockApt.EXPECT().Update(),
-				mockApt.EXPECT().Download(),
-				mockApt.EXPECT().Install(),
+				mockApt.EXPECT().DownloadAll(),
+				mockApt.EXPECT().InstallAll(),
 			)
 			allowAllDepLinkingMethods()
 			Expect(supplier.Run()).To(Succeed())
@@ -97,8 +97,8 @@ var _ = Describe("Supply", func() {
 					mockApt.EXPECT().AddKeys(),
 					mockApt.EXPECT().HasRepos(),
 					mockApt.EXPECT().Update(),
-					mockApt.EXPECT().Download(),
-					mockApt.EXPECT().Install(),
+					mockApt.EXPECT().DownloadAll(),
+					mockApt.EXPECT().InstallAll(),
 				)
 				allowAllDepLinkingMethods()
 				Expect(supplier.Run()).To(Succeed())
@@ -113,8 +113,8 @@ var _ = Describe("Supply", func() {
 					mockApt.EXPECT().HasRepos().Return(true),
 					mockApt.EXPECT().AddRepos(),
 					mockApt.EXPECT().Update(),
-					mockApt.EXPECT().Download(),
-					mockApt.EXPECT().Install(),
+					mockApt.EXPECT().DownloadAll(),
+					mockApt.EXPECT().InstallAll(),
 				)
 				allowAllDepLinkingMethods()
 				Expect(supplier.Run()).To(Succeed())

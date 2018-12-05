@@ -128,11 +128,10 @@ func (mr *MockAptMockRecorder) HasRepos() *gomock.Call {
 }
 
 // AddKeys mocks base method
-func (m *MockApt) AddKeys() (string, error) {
+func (m *MockApt) AddKeys() error {
 	ret := m.ctrl.Call(m, "AddKeys")
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // AddKeys indicates an expected call of AddKeys
@@ -153,11 +152,10 @@ func (mr *MockAptMockRecorder) AddRepos() *gomock.Call {
 }
 
 // Update mocks base method
-func (m *MockApt) Update() (string, error) {
+func (m *MockApt) Update() error {
 	ret := m.ctrl.Call(m, "Update")
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // Update indicates an expected call of Update
@@ -165,28 +163,26 @@ func (mr *MockAptMockRecorder) Update() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockApt)(nil).Update))
 }
 
-// Download mocks base method
-func (m *MockApt) Download() (string, error) {
-	ret := m.ctrl.Call(m, "Download")
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+// DownloadAll mocks base method
+func (m *MockApt) DownloadAll() error {
+	ret := m.ctrl.Call(m, "DownloadAll")
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// Download indicates an expected call of Download
-func (mr *MockAptMockRecorder) Download() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Download", reflect.TypeOf((*MockApt)(nil).Download))
+// DownloadAll indicates an expected call of DownloadAll
+func (mr *MockAptMockRecorder) DownloadAll() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DownloadAll", reflect.TypeOf((*MockApt)(nil).DownloadAll))
 }
 
-// Install mocks base method
-func (m *MockApt) Install() (string, error) {
-	ret := m.ctrl.Call(m, "Install")
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+// InstallAll mocks base method
+func (m *MockApt) InstallAll() error {
+	ret := m.ctrl.Call(m, "InstallAll")
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
-// Install indicates an expected call of Install
-func (mr *MockAptMockRecorder) Install() *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Install", reflect.TypeOf((*MockApt)(nil).Install))
+// InstallAll indicates an expected call of InstallAll
+func (mr *MockAptMockRecorder) InstallAll() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InstallAll", reflect.TypeOf((*MockApt)(nil).InstallAll))
 }
