@@ -53,7 +53,7 @@ var _ = Describe("Apt supply buildpack", func() {
 
 		It("runs", func() {
 			PushApp(app)
-			Expect(app.Stdout.String()).To(ContainSubstring("-----> Download go 1.9"))
+			Expect(app.Stdout.String()).To(ContainSubstring("-----> Download go"))
 
 			Expect(app.Stdout.String()).To(ContainSubstring("Installing apt packages"))
 			Expect(app.GetBody("/bosh")).To(ContainSubstring("BOSH: version 2"))
