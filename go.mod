@@ -4,7 +4,7 @@ require (
 	cloud.google.com/go v0.33.1
 	github.com/Masterminds/semver v1.4.2
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/cloudfoundry/libbuildpack v0.0.0-20181220194100-ab9ad86e0dc5
+	github.com/cloudfoundry/libbuildpack v0.0.0-20181220194546-030f4c4f404a
 	github.com/elazarl/goproxy v0.0.0-20181111060418-2ce16c963a8a
 	github.com/golang/mock v1.2.0
 	github.com/golang/protobuf v1.2.0
