@@ -4,7 +4,7 @@ require (
 	cloud.google.com/go v0.33.1
 	github.com/Masterminds/semver v1.4.2
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/cloudfoundry/libbuildpack v0.0.0-20181211154449-49acf76fd9c6
+	github.com/cloudfoundry/libbuildpack v0.0.0-20181220194100-ab9ad86e0dc5
 	github.com/elazarl/goproxy v0.0.0-20181111060418-2ce16c963a8a
 	github.com/golang/mock v1.2.0
 	github.com/golang/protobuf v1.2.0
@@ -14,7 +14,7 @@ require (
 	github.com/onsi/gomega v1.4.3
 	github.com/rogpeppe/go-charset v0.0.0-20180617210344-2471d30d28b4
 	github.com/tidwall/gjson v1.1.3
-	github.com/tidwall/match v1.0.0
+	github.com/tidwall/match v1.0.1
 	go4.org v0.0.0-20181109185143-00e24f1b2599
 	golang.org/x/build v0.0.0-20181121152522-2b0e3d65700e
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
