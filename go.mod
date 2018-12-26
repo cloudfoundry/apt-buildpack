@@ -19,9 +19,11 @@ require (
 	golang.org/x/build v0.0.0-20181121152522-2b0e3d65700e
 	golang.org/x/crypto v0.0.0-20181203042331-505ab145d0a9
 	golang.org/x/net v0.0.0-20181201002055-351d144fa1fc
+	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
 	golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35
 	golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2
 	golang.org/x/tools v0.0.0-20181201035826-d0ca3933b724
+	google.golang.org/genproto v0.0.0-20181029155118-b69ba1387ce2
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-20181117152235-275e9df93516
 	gopkg.in/yaml.v2 v2.2.2
 )
