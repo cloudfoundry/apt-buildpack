@@ -1,3 +1,9 @@
+v0.1.6 Mar 01, 2019
+====================
+
+* Update go to 1.11.5 for compiling buildpack from source when using URLs
+  (https://www.pivotaltracker.com/story/show/163701450)
+
 v0.1.5 Jan 22, 2019
 ====================
 
