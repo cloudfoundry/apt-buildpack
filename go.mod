@@ -3,7 +3,7 @@ module github.com/cloudfoundry/apt-buildpack
 require (
 	cloud.google.com/go v0.34.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/cloudfoundry/libbuildpack v0.0.0-20190305200151-930a1dabf62a
+	github.com/cloudfoundry/libbuildpack v0.0.0-20190306221236-27b54d489309
 	github.com/golang/mock v1.2.0
 	github.com/inconshreveable/go-vhost v0.0.0-20160627193104-06d84117953b // indirect
 	github.com/onsi/ginkgo v1.7.0
