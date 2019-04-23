@@ -1,3 +1,8 @@
+v0.1.7 Apr 23, 2019
+====================
+
+* Remove warning logs causing bosh cli error
+
 v0.1.6 Mar 01, 2019
 ====================
 
