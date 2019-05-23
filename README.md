@@ -21,6 +21,8 @@ If you would like to use custom apt repositories, you can add `keys` and `repos`
 
 ```
 ---
+truncatesources: true
+cleancache: true
 keys:
 - https://example.com/public.key
 repos:
@@ -29,6 +31,8 @@ packages:
 - ascii
 - libxml
 ```
+`truncatesources` as the name suggestes trancaces the sources.list file and puts just entries specified.
+`cleancache` calls `apt-get clean` and `apt-get autoclean`
 
 #### Using a PPA
 
