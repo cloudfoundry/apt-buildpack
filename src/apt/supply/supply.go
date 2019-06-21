@@ -62,7 +62,7 @@ func (s *Supplier) Run() error {
 		}
 	}
 
-	if s.Apt.HasRepos() {
+	if s.Apt.HasClean() {
 		s.Log.BeginStep("Cleaning apt cache")
 		if err := s.Apt.Clean(); err != nil {
 			return err

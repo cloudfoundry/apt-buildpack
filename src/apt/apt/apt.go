@@ -208,11 +208,11 @@ func (a *Apt) Clean() error {
 	fmt.Printf("Cleaning apt cache \n")
 	args := append(a.options, "clean")
 	if out, err := a.command.Output("/", "apt-get", args...); err != nil {
-		return fmt.Errorf("failed to apt-get clean %s\n\n%s", out, err)
+		fmt.Printf("Note: failed to apt-get clean %s\n\n%s", out, err)
 	}
 	args2 := append(a.options, "autoclean")
 	if out, err := a.command.Output("/", "apt-get", args2...); err != nil {
-		return fmt.Errorf("failed to apt-get autoclean %s\n\n%s", out, err)
+		fmt.Printf("Note: failed to apt-get autoclean %s\n\n%s", out, err)
 	}
 
 	return nil
