@@ -29,8 +29,8 @@ func (r *Repository) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	}
 
 	data := struct {
-		Name            string
-		Priority        string
+		Name     string
+		Priority string
 	}{}
 	err := unmarshal(&data)
 	if err != nil {
@@ -46,8 +46,8 @@ type Apt struct {
 	command            Command
 	options            []string
 	aptFilePath        string
-	TruncateSources 	bool  		`yaml:"truncatesources,omitempty"`
-	CleanCache			bool 		`yaml:"cleancache,omitempty"`
+	TruncateSources    bool         `yaml:"truncatesources,omitempty"`
+	CleanCache         bool         `yaml:"cleancache,omitempty"`
 	Keys               []string     `yaml:"keys"`
 	GpgAdvancedOptions []string     `yaml:"gpg_advanced_options"`
 	Repos              []Repository `yaml:"repos"`
@@ -208,11 +208,11 @@ func (a *Apt) Clean() error {
 	fmt.Printf("Cleaning apt cache \n")
 	args := append(a.options, "clean")
 	if out, err := a.command.Output("/", "apt-get", args...); err != nil {
-		fmt.Printf("Note: failed to apt-get clean %s\n\n%s", out, err)
+		fmt.Printf("Info: error running apt-get clean %s\n\n%s", out, err)
 	}
 	args2 := append(a.options, "autoclean")
 	if out, err := a.command.Output("/", "apt-get", args2...); err != nil {
-		fmt.Printf("Note: failed to apt-get autoclean %s\n\n%s", out, err)
+		fmt.Printf("Info: error running apt-get autoclean %s\n\n%s", out, err)
 	}
 
 	return nil
@@ -245,7 +245,7 @@ func (a *Apt) DownloadAll() error {
 	}
 
 	// download all repo packages in one invocation
-	aptArgs := append(a.options, "-y", "--allow-downgrades", "--allow-remove-essential","--allow-change-held-packages", "-d", "install", "--reinstall")
+	aptArgs := append(a.options, "-y", "--allow-downgrades", "--allow-remove-essential", "--allow-change-held-packages", "-d", "install", "--reinstall")
 	args := append(aptArgs, repoPackages...)
 	out, err := a.command.Output("/", "apt-get", args...)
 	if err != nil {

@@ -31,8 +31,10 @@ packages:
 - ascii
 - libxml
 ```
-`truncatesources` as the name suggestes trancaces the sources.list file and puts just entries specified.
-`cleancache` calls `apt-get clean` and `apt-get autoclean`
+`truncatesources` as the name suggests truncates the sources.list file and puts just the entries specified in repos section. 
+This maybe needed in environment where ubuntu public repos are blocked.
+
+`cleancache` calls `apt-get clean` and `apt-get autoclean`. Useful to purge any cached content.
 
 #### Using a PPA
 
