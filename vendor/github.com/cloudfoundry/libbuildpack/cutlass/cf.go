@@ -1,6 +1,8 @@
 package cutlass
 
 import (
+	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,7 +22,7 @@ import (
 var DefaultMemory string = ""
 var DefaultDisk string = ""
 var Cached bool = false
-var DefaultStdoutStderr io.Writer = nil
+var DefaultStdoutStderr io.Writer = &bytes.Buffer{}
 
 type cfConfig struct {
 	SpaceFields struct {
@@ -382,10 +384,11 @@ func (a *App) Push() error {
 	}
 
 	command := exec.Command("cf", "start", a.Name)
-	command.Stdout = DefaultStdoutStderr
-	command.Stderr = DefaultStdoutStderr
+	buf := &bytes.Buffer{}
+	command.Stdout = buf
+	command.Stderr = buf
 	if err := command.Run(); err != nil {
-		return err
+		return fmt.Errorf("err: %s\n\nlogs: %s", err, buf)
 	}
 	return nil
 }
@@ -415,7 +418,12 @@ func (a *App) Get(path string, headers map[string]string) (string, map[string][]
 	if err != nil {
 		return "", map[string][]string{}, err
 	}
-	client := &http.Client{}
+	insecureSkipVerify, _ := os.LookupEnv("CUTLASS_SKIP_TLS_VERIFY")
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: insecureSkipVerify == "true"},
+		},
+	}
 	if headers["NoFollow"] == "true" {
 		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
