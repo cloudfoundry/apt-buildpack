@@ -164,7 +164,7 @@ func (a *Apt) AddRepos() error {
 
 	var openmode int = os.O_APPEND
 
-	if a.TruncateSources {
+	if a.HasTruncateSources() {
 		openmode = os.O_TRUNC
 		fmt.Print("Truncating sources.list file.\n")
 	}
@@ -201,6 +201,10 @@ func (a *Apt) AddRepos() error {
 
 func (a *Apt) HasClean() bool {
 	return a.CleanCache
+}
+
+func (a *Apt) HasTruncateSources() bool {
+	return a.TruncateSources
 }
 
 func (a *Apt) Clean() error {

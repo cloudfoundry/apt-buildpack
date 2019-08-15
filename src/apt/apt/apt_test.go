@@ -303,7 +303,7 @@ var _ = Describe("Apt", func() {
 				"-o", "dir::etc::sourcelist="+cacheDir+"/apt/sources/sources.list",
 				"-o", "dir::etc::trusted="+cacheDir+"/apt/etc/trusted.gpg",
 				"-o", "Dir::Etc::preferences="+cacheDir+"/apt/etc/preferences",
-				"-y", "--force-yes", "-d", "install", "--reinstall",
+				"-y", "--allow-downgrades", "--allow-remove-essential", "--allow-change-held-packages", "-d", "install", "--reinstall",
 			).Return("apt output", nil)
 
 			Expect(a.DownloadAll()).To(Succeed())
