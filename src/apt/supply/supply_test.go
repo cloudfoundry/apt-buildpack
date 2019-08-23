@@ -55,6 +55,7 @@ var _ = Describe("Supply", func() {
 		mockApt.EXPECT().Setup().AnyTimes()
 		mockApt.EXPECT().HasKeys().AnyTimes()
 		mockApt.EXPECT().HasRepos().AnyTimes()
+		mockApt.EXPECT().HasClean().AnyTimes()
 		mockApt.EXPECT().Update().AnyTimes()
 		mockApt.EXPECT().DownloadAll().AnyTimes()
 		mockApt.EXPECT().InstallAll().AnyTimes()
@@ -70,6 +71,7 @@ var _ = Describe("Supply", func() {
 				mockApt.EXPECT().Setup(),
 				mockApt.EXPECT().HasKeys(),
 				mockApt.EXPECT().HasRepos(),
+				mockApt.EXPECT().HasClean(),
 				mockApt.EXPECT().Update(),
 				mockApt.EXPECT().DownloadAll(),
 				mockApt.EXPECT().InstallAll(),
@@ -96,6 +98,7 @@ var _ = Describe("Supply", func() {
 					mockApt.EXPECT().HasKeys().Return(true),
 					mockApt.EXPECT().AddKeys(),
 					mockApt.EXPECT().HasRepos(),
+					mockApt.EXPECT().HasClean(),
 					mockApt.EXPECT().Update(),
 					mockApt.EXPECT().DownloadAll(),
 					mockApt.EXPECT().InstallAll(),
@@ -112,6 +115,7 @@ var _ = Describe("Supply", func() {
 					mockApt.EXPECT().HasKeys(),
 					mockApt.EXPECT().HasRepos().Return(true),
 					mockApt.EXPECT().AddRepos(),
+					mockApt.EXPECT().HasClean(),
 					mockApt.EXPECT().Update(),
 					mockApt.EXPECT().DownloadAll(),
 					mockApt.EXPECT().InstallAll(),

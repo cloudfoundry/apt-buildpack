@@ -208,3 +208,31 @@ func (mr *MockAptMockRecorder) InstallAll() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InstallAll", reflect.TypeOf((*MockApt)(nil).InstallAll))
 }
+
+// Clean mocks base method
+func (m *MockApt) Clean() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Clean")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Clean indicates an expected call of Clean
+func (mr *MockAptMockRecorder) Clean() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clean", reflect.TypeOf((*MockApt)(nil).Clean))
+}
+
+// HasClean mocks base method
+func (m *MockApt) HasClean() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasClean")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasClean indicates an expected call of HasClean
+func (mr *MockAptMockRecorder) HasClean() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasClean", reflect.TypeOf((*MockApt)(nil).HasClean))
+}

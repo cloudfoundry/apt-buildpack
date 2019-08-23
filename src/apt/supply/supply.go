@@ -24,6 +24,8 @@ type Apt interface {
 	Update() error
 	DownloadAll() error
 	InstallAll() error
+	Clean() error
+	HasClean() bool
 }
 
 type Supplier struct {
@@ -60,6 +62,12 @@ func (s *Supplier) Run() error {
 		}
 	}
 
+	if s.Apt.HasClean() {
+		s.Log.BeginStep("Cleaning apt cache")
+		if err := s.Apt.Clean(); err != nil {
+			return err
+		}
+	}
 	s.Log.BeginStep("Updating apt cache")
 	if err := s.Apt.Update(); err != nil {
 		return err
