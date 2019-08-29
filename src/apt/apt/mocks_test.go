@@ -6,6 +6,7 @@ package apt_test
 
 import (
 	gomock "github.com/golang/mock/gomock"
+	io "io"
 	reflect "reflect"
 )
 
@@ -34,7 +35,6 @@ func (m *MockCommand) EXPECT() *MockCommandMockRecorder {
 
 // Output mocks base method
 func (m *MockCommand) Output(arg0, arg1 string, arg2 ...string) (string, error) {
-	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
@@ -47,7 +47,23 @@ func (m *MockCommand) Output(arg0, arg1 string, arg2 ...string) (string, error) 
 
 // Output indicates an expected call of Output
 func (mr *MockCommandMockRecorder) Output(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Output", reflect.TypeOf((*MockCommand)(nil).Output), varargs...)
+}
+
+// Execute mocks base method
+func (m *MockCommand) Execute(dir string, stdout, stderr io.Writer, program string, args ...string) error {
+	varargs := []interface{}{dir, stdout, stderr, program}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Execute", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Execute indicates an expected call of Execute
+func (mr *MockCommandMockRecorder) Execute(dir, stdout, stderr, program interface{}, args ...interface{}) *gomock.Call {
+	varargs := append([]interface{}{dir, stdout, stderr, program}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockCommand)(nil).Execute), varargs...)
 }

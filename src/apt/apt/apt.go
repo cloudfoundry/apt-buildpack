@@ -222,7 +222,7 @@ func (a *Apt) Update() error {
 	args := append(a.options, "update")
 
 	var errBuff bytes.Buffer
-	if err := a.command.Execute("/", os.Stdout, &errBuff, "apt-get", args...); err != nil {
+	if err := a.command.Execute("/", &errBuff, &errBuff, "apt-get", args...); err != nil {
 		return fmt.Errorf("failed to apt-get update %s\n\n%s", errBuff.String(), err)
 	}
 	return nil

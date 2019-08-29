@@ -1,4 +1,6 @@
 ---
+truncatesources: true
+cleancache: true
 keys:
 - {{.repoBaseURL}}gpg_public_key
 repos:
