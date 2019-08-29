@@ -1,3 +1,13 @@
+v0.1.9 Aug 29, 2019
+====================
+
+* Adds support for installing apt packages from custom repositories in offline environments.
+  - Thanks to @abhinavrau for the PR!
+	(https://www.pivotaltracker.com/story/show/167925100)
+
+* Cleans up output to clear up confusion. Yay clarity!
+  (https://www.pivotaltracker.com/story/show/163646135)
+
 v0.1.8 May 07, 2019
 ====================
 
