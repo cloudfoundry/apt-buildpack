@@ -1,6 +1,7 @@
 package apt
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 
 type Command interface {
 	Output(string, string, ...string) (string, error)
+	Execute(dir string, stdout io.Writer, stderr io.Writer, program string, args ...string) error
 }
 
 type Repository struct {
@@ -161,10 +163,9 @@ func (a *Apt) AddKeys() error {
 }
 
 func (a *Apt) AddRepos() error {
+	openmode := os.O_APPEND
 
-	var openmode int = os.O_APPEND
-
-	if a.HasTruncateSources() {
+	if a.TruncateSources {
 		openmode = os.O_TRUNC
 		fmt.Print("Truncating sources.list file.\n")
 	}
@@ -203,12 +204,7 @@ func (a *Apt) HasClean() bool {
 	return a.CleanCache
 }
 
-func (a *Apt) HasTruncateSources() bool {
-	return a.TruncateSources
-}
-
 func (a *Apt) Clean() error {
-
 	fmt.Printf("Cleaning apt cache \n")
 	args := append(a.options, "clean")
 	if out, err := a.command.Output("/", "apt-get", args...); err != nil {
@@ -224,8 +220,10 @@ func (a *Apt) Clean() error {
 
 func (a *Apt) Update() error {
 	args := append(a.options, "update")
-	if out, err := a.command.Output("/", "apt-get", args...); err != nil {
-		return fmt.Errorf("failed to apt-get update %s\n\n%s", out, err)
+
+	var errBuff bytes.Buffer
+	if err := a.command.Execute("/", os.Stdout, &errBuff, "apt-get", args...); err != nil {
+		return fmt.Errorf("failed to apt-get update %s\n\n%s", errBuff.String(), err)
 	}
 	return nil
 }

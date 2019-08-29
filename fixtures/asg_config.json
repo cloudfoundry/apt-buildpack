@@ -1,0 +1,42 @@
+[
+  {
+    "protocol": "all",
+    "destination": "0.0.0.0-9.255.255.255"
+  },
+  {
+    "protocol": "all",
+    "destination": "11.0.0.0-91.189.88.23"
+  },
+  {
+    "protocol": "all",
+    "destination": "91.189.88.25-91.189.88.30"
+  },
+  {
+    "protocol": "all",
+    "destination": "91.189.88.32-91.189.88.148"
+  },
+  {
+    "protocol": "all",
+    "destination": "91.189.88.150-91.189.88.161"
+  },
+  {
+    "protocol": "all",
+    "destination": "91.189.88.163-91.189.88.172"
+  },
+  {
+    "protocol": "all",
+    "destination": "91.189.88.178-169.253.255.255"
+  },
+  {
+    "protocol": "all",
+    "destination": "169.255.0.0-172.15.255.255"
+  },
+  {
+    "protocol": "all",
+    "destination": "172.32.0.0-192.167.255.255"
+  },
+  {
+    "protocol": "all",
+    "destination": "192.169.0.0-255.255.255.255"
+  }
+]
