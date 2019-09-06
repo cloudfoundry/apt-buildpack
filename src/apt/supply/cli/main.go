@@ -15,6 +15,11 @@ import (
 func main() {
 	logger := libbuildpack.NewLogger(os.Stdout)
 
+	if os.Getenv("CF_STACK") == libbuildpack.CFLINUXFS2 {
+		logger.Error("stack : %s is no longer supported by this buildpack", libbuildpack.CFLINUXFS2)
+		os.Exit(8)
+	}
+
 	if os.Getenv("BP_DEBUG") != "" {
 		cmd := exec.Command("find", ".")
 		cmd.Dir = "/tmp/cache"
