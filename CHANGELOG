@@ -1,3 +1,10 @@
+v0.2.0 Sep 06, 2019
+=====================
+
+* Remove support for cflinuxfs2.
+  (https://www.pivotaltracker.com/story/show/168269855)
+
+
 v0.1.9 Aug 29, 2019
 ====================
 
