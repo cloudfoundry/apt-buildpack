@@ -7,7 +7,7 @@ require (
 	github.com/onsi/ginkgo v1.10.3
 	github.com/onsi/gomega v1.7.0
 	github.com/pkg/errors v0.8.1
-	golang.org/x/sys v0.0.0-20191126131656-8a8471f7e56d // indirect
+	golang.org/x/sys v0.0.0-20191127021746-63cb32ae39b2 // indirect
 )
 
 go 1.13
