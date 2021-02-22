@@ -5,62 +5,35 @@
 package supply_test
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockStager is a mock of Stager interface
+// MockStager is a mock of Stager interface.
 type MockStager struct {
 	ctrl     *gomock.Controller
 	recorder *MockStagerMockRecorder
 }
 
-// MockStagerMockRecorder is the mock recorder for MockStager
+// MockStagerMockRecorder is the mock recorder for MockStager.
 type MockStagerMockRecorder struct {
 	mock *MockStager
 }
 
-// NewMockStager creates a new mock instance
+// NewMockStager creates a new mock instance.
 func NewMockStager(ctrl *gomock.Controller) *MockStager {
 	mock := &MockStager{ctrl: ctrl}
 	mock.recorder = &MockStagerMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockStager) EXPECT() *MockStagerMockRecorder {
 	return m.recorder
 }
 
-// LinkDirectoryInDepDir mocks base method
-func (m *MockStager) LinkDirectoryInDepDir(arg0, arg1 string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LinkDirectoryInDepDir", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// LinkDirectoryInDepDir indicates an expected call of LinkDirectoryInDepDir
-func (mr *MockStagerMockRecorder) LinkDirectoryInDepDir(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LinkDirectoryInDepDir", reflect.TypeOf((*MockStager)(nil).LinkDirectoryInDepDir), arg0, arg1)
-}
-
-// DepDir mocks base method
-func (m *MockStager) DepDir() string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DepDir")
-	ret0, _ := ret[0].(string)
-	return ret0
-}
-
-// DepDir indicates an expected call of DepDir
-func (mr *MockStagerMockRecorder) DepDir() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DepDir", reflect.TypeOf((*MockStager)(nil).DepDir))
-}
-
-// CacheDir mocks base method
+// CacheDir mocks base method.
 func (m *MockStager) CacheDir() string {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CacheDir")
@@ -68,78 +41,64 @@ func (m *MockStager) CacheDir() string {
 	return ret0
 }
 
-// CacheDir indicates an expected call of CacheDir
+// CacheDir indicates an expected call of CacheDir.
 func (mr *MockStagerMockRecorder) CacheDir() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CacheDir", reflect.TypeOf((*MockStager)(nil).CacheDir))
 }
 
-// MockApt is a mock of Apt interface
+// DepDir mocks base method.
+func (m *MockStager) DepDir() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DepDir")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// DepDir indicates an expected call of DepDir.
+func (mr *MockStagerMockRecorder) DepDir() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DepDir", reflect.TypeOf((*MockStager)(nil).DepDir))
+}
+
+// LinkDirectoryInDepDir mocks base method.
+func (m *MockStager) LinkDirectoryInDepDir(arg0, arg1 string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "LinkDirectoryInDepDir", arg0, arg1)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// LinkDirectoryInDepDir indicates an expected call of LinkDirectoryInDepDir.
+func (mr *MockStagerMockRecorder) LinkDirectoryInDepDir(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LinkDirectoryInDepDir", reflect.TypeOf((*MockStager)(nil).LinkDirectoryInDepDir), arg0, arg1)
+}
+
+// MockApt is a mock of Apt interface.
 type MockApt struct {
 	ctrl     *gomock.Controller
 	recorder *MockAptMockRecorder
 }
 
-// MockAptMockRecorder is the mock recorder for MockApt
+// MockAptMockRecorder is the mock recorder for MockApt.
 type MockAptMockRecorder struct {
 	mock *MockApt
 }
 
-// NewMockApt creates a new mock instance
+// NewMockApt creates a new mock instance.
 func NewMockApt(ctrl *gomock.Controller) *MockApt {
 	mock := &MockApt{ctrl: ctrl}
 	mock.recorder = &MockAptMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockApt) EXPECT() *MockAptMockRecorder {
 	return m.recorder
 }
 
-// Setup mocks base method
-func (m *MockApt) Setup() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Setup")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Setup indicates an expected call of Setup
-func (mr *MockAptMockRecorder) Setup() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Setup", reflect.TypeOf((*MockApt)(nil).Setup))
-}
-
-// HasKeys mocks base method
-func (m *MockApt) HasKeys() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasKeys")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// HasKeys indicates an expected call of HasKeys
-func (mr *MockAptMockRecorder) HasKeys() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasKeys", reflect.TypeOf((*MockApt)(nil).HasKeys))
-}
-
-// HasRepos mocks base method
-func (m *MockApt) HasRepos() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasRepos")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// HasRepos indicates an expected call of HasRepos
-func (mr *MockAptMockRecorder) HasRepos() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasRepos", reflect.TypeOf((*MockApt)(nil).HasRepos))
-}
-
-// AddKeys mocks base method
+// AddKeys mocks base method.
 func (m *MockApt) AddKeys() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddKeys")
@@ -147,13 +106,13 @@ func (m *MockApt) AddKeys() error {
 	return ret0
 }
 
-// AddKeys indicates an expected call of AddKeys
+// AddKeys indicates an expected call of AddKeys.
 func (mr *MockAptMockRecorder) AddKeys() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddKeys", reflect.TypeOf((*MockApt)(nil).AddKeys))
 }
 
-// AddRepos mocks base method
+// AddRepos mocks base method.
 func (m *MockApt) AddRepos() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddRepos")
@@ -161,55 +120,13 @@ func (m *MockApt) AddRepos() error {
 	return ret0
 }
 
-// AddRepos indicates an expected call of AddRepos
+// AddRepos indicates an expected call of AddRepos.
 func (mr *MockAptMockRecorder) AddRepos() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRepos", reflect.TypeOf((*MockApt)(nil).AddRepos))
 }
 
-// Update mocks base method
-func (m *MockApt) Update() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Update indicates an expected call of Update
-func (mr *MockAptMockRecorder) Update() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockApt)(nil).Update))
-}
-
-// DownloadAll mocks base method
-func (m *MockApt) DownloadAll() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DownloadAll")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DownloadAll indicates an expected call of DownloadAll
-func (mr *MockAptMockRecorder) DownloadAll() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DownloadAll", reflect.TypeOf((*MockApt)(nil).DownloadAll))
-}
-
-// InstallAll mocks base method
-func (m *MockApt) InstallAll() error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InstallAll")
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// InstallAll indicates an expected call of InstallAll
-func (mr *MockAptMockRecorder) InstallAll() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InstallAll", reflect.TypeOf((*MockApt)(nil).InstallAll))
-}
-
-// Clean mocks base method
+// Clean mocks base method.
 func (m *MockApt) Clean() error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Clean")
@@ -217,13 +134,27 @@ func (m *MockApt) Clean() error {
 	return ret0
 }
 
-// Clean indicates an expected call of Clean
+// Clean indicates an expected call of Clean.
 func (mr *MockAptMockRecorder) Clean() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Clean", reflect.TypeOf((*MockApt)(nil).Clean))
 }
 
-// HasClean mocks base method
+// DownloadAll mocks base method.
+func (m *MockApt) DownloadAll() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DownloadAll")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DownloadAll indicates an expected call of DownloadAll.
+func (mr *MockAptMockRecorder) DownloadAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DownloadAll", reflect.TypeOf((*MockApt)(nil).DownloadAll))
+}
+
+// HasClean mocks base method.
 func (m *MockApt) HasClean() bool {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasClean")
@@ -231,8 +162,78 @@ func (m *MockApt) HasClean() bool {
 	return ret0
 }
 
-// HasClean indicates an expected call of HasClean
+// HasClean indicates an expected call of HasClean.
 func (mr *MockAptMockRecorder) HasClean() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasClean", reflect.TypeOf((*MockApt)(nil).HasClean))
+}
+
+// HasKeys mocks base method.
+func (m *MockApt) HasKeys() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasKeys")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasKeys indicates an expected call of HasKeys.
+func (mr *MockAptMockRecorder) HasKeys() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasKeys", reflect.TypeOf((*MockApt)(nil).HasKeys))
+}
+
+// HasRepos mocks base method.
+func (m *MockApt) HasRepos() bool {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasRepos")
+	ret0, _ := ret[0].(bool)
+	return ret0
+}
+
+// HasRepos indicates an expected call of HasRepos.
+func (mr *MockAptMockRecorder) HasRepos() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasRepos", reflect.TypeOf((*MockApt)(nil).HasRepos))
+}
+
+// InstallAll mocks base method.
+func (m *MockApt) InstallAll() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InstallAll")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InstallAll indicates an expected call of InstallAll.
+func (mr *MockAptMockRecorder) InstallAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InstallAll", reflect.TypeOf((*MockApt)(nil).InstallAll))
+}
+
+// Setup mocks base method.
+func (m *MockApt) Setup() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Setup")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Setup indicates an expected call of Setup.
+func (mr *MockAptMockRecorder) Setup() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Setup", reflect.TypeOf((*MockApt)(nil).Setup))
+}
+
+// Update mocks base method.
+func (m *MockApt) Update() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockAptMockRecorder) Update() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockApt)(nil).Update))
 }
