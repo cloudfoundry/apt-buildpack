@@ -16,25 +16,28 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func SetStagingASG(ASGConfigPath string) (func() ([]byte, error), error) {
+	setASG := fmt.Sprintf(`cf create-security-group test_asg %s && cf bind-staging-security-group test_asg && cf unbind-staging-security-group public_networks`, ASGConfigPath)
+
+	b, err := exec.Command("bash", "-c", setASG).CombinedOutput()
+	if err != nil {
+		return func() ([]byte, error) { return b, nil }, errors.Wrap(err, string(b))
+	}
+
+	clearASG := `cf bind-staging-security-group public_networks && cf unbind-staging-security-group test_asg`
+
+	return func() ([]byte, error) { return exec.Command("bash", "-c", clearASG).CombinedOutput() }, nil
+}
+
 var _ = Describe("Apt supply buildpack", func() {
 	var (
 		app         *cutlass.App
 		repo        *cutlass.App
 		appDir      string
-		repoBaseUrl string
+		repoBaseURL string
 		err         error
 		cleanASG    func() ([]byte, error)
 	)
-
-	templateFile := func(templatePath, outputPath string, values map[string]string) *template.Template {
-		template, err := template.ParseFiles(templatePath)
-		Expect(err).ToNot(HaveOccurred())
-		file, err := os.Create(outputPath)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(template.Execute(file, values)).To(Succeed())
-		Expect(file.Close()).To(Succeed())
-		return nil
-	}
 
 	BeforeEach(func() {
 		repo = cutlass.New(filepath.Join(bpDir, "fixtures", "repo"))
@@ -45,12 +48,20 @@ var _ = Describe("Apt supply buildpack", func() {
 		appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", "simple"))
 		Expect(err).NotTo(HaveOccurred())
 
-		repoBaseUrl, err = repo.GetUrl("/")
+		repoBaseURL, err = repo.GetUrl("/")
 		Expect(err).NotTo(HaveOccurred())
 
-		templateFile(filepath.Join(bpDir, "fixtures", "simple", "apt.yml"),
-			filepath.Join(appDir, "apt.yml"),
-			map[string]string{"repoBaseURL": repoBaseUrl})
+		templatePath := filepath.Join(bpDir, "fixtures", "simple", "apt.yml")
+		outputPath := filepath.Join(appDir, "apt.yml")
+		values := map[string]string{"repoBaseURL": repoBaseURL}
+
+		template, err := template.ParseFiles(templatePath)
+		Expect(err).ToNot(HaveOccurred())
+
+		file, err := os.Create(outputPath)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(template.Execute(file, values)).To(Succeed())
+		Expect(file.Close()).To(Succeed())
 	})
 
 	AfterEach(func() {
@@ -80,7 +91,6 @@ var _ = Describe("Apt supply buildpack", func() {
 
 			By("installing a package from a specific repository with a lower priority")
 			Expect(app.GetBody("/cf")).To(ContainSubstring("cf version 6.38.0+7ddf0aadd.2018-08-07"))
-			cutlass.ApiVersion()
 		})
 	})
 
@@ -147,16 +157,3 @@ var _ = Describe("Apt supply buildpack", func() {
 		})
 	})
 })
-
-func SetStagingASG(ASGConfigPath string) (func() ([]byte, error), error) {
-	setASG := fmt.Sprintf(`cf create-security-group test_asg %s && cf bind-staging-security-group test_asg && cf unbind-staging-security-group public_networks`, ASGConfigPath)
-
-	b, err := exec.Command("bash", "-c", setASG).CombinedOutput()
-	if err != nil {
-		return func() ([]byte, error) { return b, nil }, errors.Wrap(err, string(b))
-	}
-
-	clearASG := `cf bind-staging-security-group public_networks && cf unbind-staging-security-group test_asg`
-
-	return func() ([]byte, error) { return exec.Command("bash", "-c", clearASG).CombinedOutput() }, nil
-}

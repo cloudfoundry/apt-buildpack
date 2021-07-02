@@ -180,7 +180,6 @@ func (a *Apt) AddRepos() error {
 		if _, err = f.WriteString("\n" + repo.Name); err != nil {
 			return err
 		}
-		fmt.Printf("Added repo %v\n", repo)
 	}
 
 	prefFile, err := os.OpenFile(a.preferences, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
