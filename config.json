@@ -2,5 +2,8 @@
   "stack": "cflinuxfs3",
   "oses": [
     "linux"
-  ]
+  ],
+  "integration": {
+    "harness": "gotest"
+  }
 }

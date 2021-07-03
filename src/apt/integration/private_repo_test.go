@@ -6,25 +6,28 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"testing"
 	"time"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 	"github.com/pkg/errors"
+	"github.com/sclevine/spec"
 
-	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("when using a private apt repo", func() {
+func testPrivateRepo(t *testing.T, context spec.G, it spec.S) {
 	var (
-		app         *cutlass.App
-		repo        *cutlass.App
-		appDir      string
-		repoBaseURL string
-		cleanASG    func() ([]byte, error)
+		Expect     = NewWithT(t).Expect
+		Eventually = NewWithT(t).Eventually
+
+		app      *cutlass.App
+		repo     *cutlass.App
+		appDir   string
+		cleanASG func() ([]byte, error)
 	)
 
-	BeforeEach(func() {
+	it.Before(func() {
 		repo = cutlass.New(filepath.Join(bpDir, "fixtures", "repo"))
 		repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
 		Expect(repo.Push()).To(Succeed())
@@ -34,26 +37,23 @@ var _ = Describe("when using a private apt repo", func() {
 		appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", "simple"))
 		Expect(err).NotTo(HaveOccurred())
 
-		repoBaseURL, err = repo.GetUrl("/")
+		repoBaseURL, err := repo.GetUrl("/")
 		Expect(err).NotTo(HaveOccurred())
 
-		templatePath := filepath.Join(bpDir, "fixtures", "simple", "apt.yml")
-		outputPath := filepath.Join(appDir, "apt.yml")
-		values := map[string]string{"repoBaseURL": repoBaseURL}
-
-		template, err := template.ParseFiles(templatePath)
+		template, err := template.ParseFiles(filepath.Join(bpDir, "fixtures", "simple", "apt.yml"))
 		Expect(err).ToNot(HaveOccurred())
 
-		file, err := os.Create(outputPath)
+		file, err := os.Create(filepath.Join(appDir, "apt.yml"))
 		Expect(err).NotTo(HaveOccurred())
-		Expect(template.Execute(file, values)).To(Succeed())
+
+		Expect(template.Execute(file, map[string]string{"repoBaseURL": repoBaseURL})).To(Succeed())
 		Expect(file.Close()).To(Succeed())
 
 		cleanASG, err = SetStagingASG(filepath.Join(bpDir, "fixtures", "asg_config.json"))
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	AfterEach(func() {
+	it.After(func() {
 		b, err := cleanASG()
 		Expect(err).NotTo(HaveOccurred(), string(b))
 
@@ -63,27 +63,27 @@ var _ = Describe("when using a private apt repo", func() {
 		Expect(os.RemoveAll(appDir)).To(Succeed())
 	})
 
-	It("doesn't navigate to canonical", func() {
+	it("doesn't navigate to canonical", func() {
 		app = cutlass.New(appDir)
 		app.Buildpacks = []string{"apt_buildpack", "https://github.com/cloudfoundry/binary-buildpack#master"}
 		app.SetEnv("BP_DEBUG", "1")
 
-		PushAppAndConfirm(app)
+		PushAppAndConfirm(t, app)
 		Expect(app.Stdout.String()).To(ContainSubstring("Installing apt packages"))
 
-		By("authenticating the apt packages")
+		// authenticating the apt packages
 		Expect(app.Stdout.String()).NotTo(ContainSubstring("The following packages cannot be authenticated"))
 
-		By("installing packages from the default repo")
+		// installing packages from the default repo
 		Expect(app.GetBody("/bosh")).To(ContainSubstring("BOSH: version 2"))
 
-		By("installing packages from a specific file location")
+		// installing packages from a specific file location
 		Expect(app.GetBody("/jq")).To(ContainSubstring("Jq: jq-1."))
 
-		By("installing a package from a specific repository with a lower priority")
+		// installing a package from a specific repository with a lower priority
 		Expect(app.GetBody("/cf")).To(ContainSubstring("cf version 6.38.0+7ddf0aadd.2018-08-07"))
 	})
-})
+}
 
 func SetStagingASG(ASGConfigPath string) (func() ([]byte, error), error) {
 	setASG := fmt.Sprintf(`cf create-security-group test_asg %s && cf bind-staging-security-group test_asg && cf unbind-staging-security-group public_networks`, ASGConfigPath)

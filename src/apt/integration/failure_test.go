@@ -4,23 +4,26 @@ import (
 	"html/template"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 
 	"github.com/cloudfoundry/libbuildpack/cutlass"
+	"github.com/sclevine/spec"
 
-	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("when used inappropriately", func() {
+func testFailure(t *testing.T, context spec.G, it spec.S) {
 	var (
-		app         *cutlass.App
-		repo        *cutlass.App
-		appDir      string
-		repoBaseURL string
+		Expect     = NewWithT(t).Expect
+		Eventually = NewWithT(t).Eventually
+
+		app    *cutlass.App
+		repo   *cutlass.App
+		appDir string
 	)
 
-	BeforeEach(func() {
+	it.Before(func() {
 		repo = cutlass.New(filepath.Join(bpDir, "fixtures", "repo"))
 		repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
 		Expect(repo.Push()).To(Succeed())
@@ -30,37 +33,34 @@ var _ = Describe("when used inappropriately", func() {
 		appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", "simple"))
 		Expect(err).NotTo(HaveOccurred())
 
-		repoBaseURL, err = repo.GetUrl("/")
+		repoBaseURL, err := repo.GetUrl("/")
 		Expect(err).NotTo(HaveOccurred())
 
-		templatePath := filepath.Join(bpDir, "fixtures", "simple", "apt.yml")
-		outputPath := filepath.Join(appDir, "apt.yml")
-		values := map[string]string{"repoBaseURL": repoBaseURL}
-
-		template, err := template.ParseFiles(templatePath)
+		template, err := template.ParseFiles(filepath.Join(bpDir, "fixtures", "simple", "apt.yml"))
 		Expect(err).ToNot(HaveOccurred())
 
-		file, err := os.Create(outputPath)
+		file, err := os.Create(filepath.Join(appDir, "apt.yml"))
 		Expect(err).NotTo(HaveOccurred())
-		Expect(template.Execute(file, values)).To(Succeed())
+
+		Expect(template.Execute(file, map[string]string{"repoBaseURL": repoBaseURL})).To(Succeed())
 		Expect(file.Close()).To(Succeed())
 	})
 
-	AfterEach(func() {
+	it.After(func() {
 		app = DestroyApp(app)
 		repo = DestroyApp(repo)
 
 		Expect(os.RemoveAll(appDir)).To(Succeed())
 	})
 
-	Context("as a final buildpack", func() {
-		BeforeEach(func() {
+	context("as a final buildpack", func() {
+		it.Before(func() {
 			app = cutlass.New(appDir)
 			app.Buildpacks = []string{"https://github.com/cloudfoundry/binary-buildpack#master", "apt_buildpack"}
 			app.SetEnv("BP_DEBUG", "1")
 		})
 
-		It("reports failure", func() {
+		it("reports failure", func() {
 			Expect(app.Push()).To(HaveOccurred())
 			Eventually(app.Stdout.String, 3*time.Second).Should(MatchRegexp("(?i)failed"))
 
@@ -68,18 +68,18 @@ var _ = Describe("when used inappropriately", func() {
 		})
 	})
 
-	Context("as a single buildpack", func() {
-		BeforeEach(func() {
+	context("as a single buildpack", func() {
+		it.Before(func() {
 			app = cutlass.New(appDir)
 			app.Buildpacks = []string{"apt_buildpack"}
 			app.SetEnv("BP_DEBUG", "1")
 		})
 
-		It("reports failure", func() {
+		it("reports failure", func() {
 			Expect(app.Push()).To(HaveOccurred())
 			Eventually(app.Stdout.String, 3*time.Second).Should(MatchRegexp("(?i)failed"))
 
 			Expect(app.Stdout.String()).To(ContainSubstring("Warning: this buildpack can only be run as a supply buildpack, it can not be run alone"))
 		})
 	})
-})
+}
