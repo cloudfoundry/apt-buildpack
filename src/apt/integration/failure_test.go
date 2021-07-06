@@ -1,9 +1,6 @@
 package integration_test
 
 import (
-	"html/template"
-	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
@@ -18,44 +15,16 @@ func testFailure(t *testing.T, context spec.G, it spec.S) {
 		Expect     = NewWithT(t).Expect
 		Eventually = NewWithT(t).Eventually
 
-		app    *cutlass.App
-		repo   *cutlass.App
-		appDir string
+		app *cutlass.App
 	)
-
-	it.Before(func() {
-		repo = cutlass.New(filepath.Join(bpDir, "fixtures", "repo"))
-		repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
-		Expect(repo.Push()).To(Succeed())
-		Eventually(func() ([]string, error) { return repo.InstanceStates() }, 20*time.Second).Should(Equal([]string{"RUNNING"}))
-
-		var err error
-		appDir, err = cutlass.CopyFixture(filepath.Join(bpDir, "fixtures", "simple"))
-		Expect(err).NotTo(HaveOccurred())
-
-		repoBaseURL, err := repo.GetUrl("/")
-		Expect(err).NotTo(HaveOccurred())
-
-		template, err := template.ParseFiles(filepath.Join(bpDir, "fixtures", "simple", "apt.yml"))
-		Expect(err).ToNot(HaveOccurred())
-
-		file, err := os.Create(filepath.Join(appDir, "apt.yml"))
-		Expect(err).NotTo(HaveOccurred())
-
-		Expect(template.Execute(file, map[string]string{"repoBaseURL": repoBaseURL})).To(Succeed())
-		Expect(file.Close()).To(Succeed())
-	})
 
 	it.After(func() {
 		app = DestroyApp(app)
-		repo = DestroyApp(repo)
-
-		Expect(os.RemoveAll(appDir)).To(Succeed())
 	})
 
 	context("as a final buildpack", func() {
 		it.Before(func() {
-			app = cutlass.New(appDir)
+			app = cutlass.New(settings.FixturePath)
 			app.Buildpacks = []string{"https://github.com/cloudfoundry/binary-buildpack#master", "apt_buildpack"}
 			app.SetEnv("BP_DEBUG", "1")
 		})
@@ -70,7 +39,7 @@ func testFailure(t *testing.T, context spec.G, it spec.S) {
 
 	context("as a single buildpack", func() {
 		it.Before(func() {
-			app = cutlass.New(appDir)
+			app = cutlass.New(settings.FixturePath)
 			app.Buildpacks = []string{"apt_buildpack"}
 			app.SetEnv("BP_DEBUG", "1")
 		})

@@ -16,55 +16,54 @@ function main() {
   stack="$(jq -r -S .stack "${ROOTDIR}/config.json")"
   harness="$(jq -r -S .integration.harness "${ROOTDIR}/config.json")"
 
+  IFS=$'\n' read -r -d '' -a matrix < <(
+    jq -r -S -c .integration.matrix[] "${ROOTDIR}/config.json" \
+      && printf "\0"
+  )
+
   util::tools::ginkgo::install --directory "${ROOTDIR}/.bin"
   util::tools::buildpack-packager::install --directory "${ROOTDIR}/.bin"
   util::tools::cf::install --directory "${ROOTDIR}/.bin"
 
-  local cached serial
-  cached=true
-  serial=true
+  for row in "${matrix[@]}"; do
+    local cached parallel
+    cached="$(jq -r -S .cached <<<"${row}")"
+    parallel="$(jq -r -S .parallel <<<"${row}")"
 
-  if [[ "${src}" == *python ]]; then
-    specs::run "${harness}" "uncached" "parallel"
-    specs::run "${harness}" "uncached" "serial"
+    echo "Running integration suite (cached: ${cached}, parallel: ${parallel})"
 
-    specs::run "${harness}" "cached" "parallel"
-    specs::run "${harness}" "cached" "serial"
-  else
-    specs::run "${harness}" "uncached" "parallel"
-    specs::run "${harness}" "cached" "parallel"
-  fi
+    specs::run "${harness}" "${cached}" "${parallel}"
+  done
 }
 
 function specs::run() {
-  local harness cached serial
+  local harness cached parallel
   harness="${1}"
   cached="${2}"
-  serial="${3}"
+  parallel="${3}"
+
+  local nodes cached_flag serial_flag
+  cached_flag="--cached=${cached}"
+  serial_flag="-serial=true"
+  nodes=1
+
+  if [[ "${parallel}" == "true" ]]; then
+    nodes=3
+    serial_flag=""
+  fi
 
   if [[ "${harness}" == "gotest" ]]; then
-    specs::gotest::run "${cached}" "${serial}"
+    specs::gotest::run "${nodes}" "${cached_flag}" "${serial_flag}"
   else
-    specs::ginkgo::run "${cached}" "${serial}"
+    specs::ginkgo::run "${nodes}" "${cached_flag}" "${serial_flag}"
   fi
 }
 
 function specs::gotest::run() {
-  local cached serial nodes
-  cached="false"
-  serial=""
-  nodes=3
-
-  echo "Run ${1} Buildpack"
-
-  if [[ "${1}" == "cached" ]] ; then
-    cached="true"
-  fi
-
-  if [[ "${2}" == "serial" ]]; then
-    nodes=1
-    serial="-serial=true"
-  fi
+  local nodes cached_flag serial_flag
+  nodes="${1}"
+  cached_flag="${2}"
+  serial_flag="${3}"
 
   CF_STACK="${CF_STACK:-"${stack}"}" \
   BUILDPACK_FILE="${UNCACHED_BUILDPACK_FILE:-}" \
@@ -75,25 +74,15 @@ function specs::gotest::run() {
       -mod vendor \
       -v \
         "${src}/integration" \
-          --cached="${cached}" "${serial}"
+         "${cached_flag}" \
+         "${serial_flag}"
 }
 
 function specs::ginkgo::run(){
-  local cached serial nodes
-  cached="false"
-  serial=""
-  nodes="${GINKGO_NODES:-3}"
-
-  echo "Run ${1} Buildpack"
-
-  if [[ "${1}" == "cached" ]] ; then
-    cached="true"
-  fi
-
-  if [[ "${2}" == "serial" ]]; then
-    nodes=1
-    serial="-serial=true"
-  fi
+  local nodes cached_flag serial_flag
+  nodes="${1}"
+  cached_flag="${2}"
+  serial_flag="${3}"
 
   CF_STACK="${CF_STACK:-"${stack}"}" \
   BUILDPACK_FILE="${UNCACHED_BUILDPACK_FILE:-}" \
@@ -101,10 +90,10 @@ function specs::ginkgo::run(){
       -r \
       -mod vendor \
       --flakeAttempts "${GINKGO_ATTEMPTS:-2}" \
-      -nodes ${nodes} \
+      -nodes "${nodes}" \
       --slowSpecThreshold 60 \
         "${src}/integration" \
-      -- --cached="${cached}" "${serial}"
+      -- "${cached_flag}" "${serial_flag}"
 }
 
 main "${@:-}"

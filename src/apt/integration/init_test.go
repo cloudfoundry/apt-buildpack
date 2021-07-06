@@ -2,7 +2,9 @@ package integration_test
 
 import (
 	"flag"
+	"html/template"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -13,14 +15,14 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var (
-	bpDir             string
-	buildpackVersion  string
-	packagedBuildpack cutlass.VersionedBuildpackPackage
-)
+var settings struct {
+	FixturePath      string
+	BuildpackPath    string
+	BuildpackVersion string
+}
 
 func init() {
-	flag.StringVar(&buildpackVersion, "version", "", "version to use (builds if empty)")
+	flag.StringVar(&settings.BuildpackVersion, "version", "", "version to use (builds if empty)")
 	flag.BoolVar(&cutlass.Cached, "cached", true, "cached buildpack")
 	flag.StringVar(&cutlass.DefaultMemory, "memory", "128M", "default memory for pushed apps")
 	flag.StringVar(&cutlass.DefaultDisk, "disk", "256M", "default disk for pushed apps")
@@ -28,22 +30,48 @@ func init() {
 
 func TestIntegration(t *testing.T) {
 	var (
-		Expect = NewWithT(t).Expect
-		err    error
+		Expect     = NewWithT(t).Expect
+		Eventually = NewWithT(t).Eventually
+
+		packagedBuildpack cutlass.VersionedBuildpackPackage
+		err               error
 	)
 
-	if buildpackVersion == "" {
+	if settings.BuildpackVersion == "" {
 		packagedBuildpack, err = cutlass.PackageUniquelyVersionedBuildpack(os.Getenv("CF_STACK"), true)
 		Expect(err).NotTo(HaveOccurred())
 
-		buildpackVersion = packagedBuildpack.Version
+		settings.BuildpackVersion = packagedBuildpack.Version
 	}
 
-	bpDir, err = cutlass.FindRoot()
+	settings.BuildpackPath, err = cutlass.FindRoot()
 	Expect(err).NotTo(HaveOccurred())
 
 	Expect(cutlass.CopyCfHome()).To(Succeed())
 	cutlass.SeedRandom()
+
+	repo := cutlass.New(filepath.Join(settings.BuildpackPath, "fixtures", "repo"))
+	defer repo.Destroy()
+
+	repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
+	Expect(repo.Push()).To(Succeed())
+	Eventually(func() ([]string, error) { return repo.InstanceStates() }, 20*time.Second).Should(Equal([]string{"RUNNING"}))
+
+	url, err := repo.GetUrl("/")
+	Expect(err).NotTo(HaveOccurred())
+
+	template, err := template.ParseFiles(filepath.Join(settings.BuildpackPath, "fixtures", "simple", "apt.yml"))
+	Expect(err).ToNot(HaveOccurred())
+
+	settings.FixturePath, err = cutlass.CopyFixture(filepath.Join(settings.BuildpackPath, "fixtures", "simple"))
+	Expect(err).NotTo(HaveOccurred())
+	defer os.RemoveAll(settings.FixturePath)
+
+	file, err := os.Create(filepath.Join(settings.FixturePath, "apt.yml"))
+	Expect(err).NotTo(HaveOccurred())
+
+	Expect(template.Execute(file, map[string]string{"repoBaseURL": url})).To(Succeed())
+	Expect(file.Close()).To(Succeed())
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}), spec.Parallel())
 	suite("Default", testDefault)
@@ -63,7 +91,7 @@ func PushAppAndConfirm(t *testing.T, app *cutlass.App) {
 
 	Expect(app.Push()).To(Succeed())
 	Eventually(func() ([]string, error) { return app.InstanceStates() }, 20*time.Second).Should(Equal([]string{"RUNNING"}))
-	Expect(app.ConfirmBuildpack(buildpackVersion)).To(Succeed())
+	Expect(app.ConfirmBuildpack(settings.BuildpackVersion)).To(Succeed())
 }
 
 func DestroyApp(app *cutlass.App) *cutlass.App {

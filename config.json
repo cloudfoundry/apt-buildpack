@@ -4,6 +4,10 @@
     "linux"
   ],
   "integration": {
-    "harness": "gotest"
+    "harness": "gotest",
+    "matrix": [
+      { "cached": false, "parallel": true },
+      { "cached": true, "parallel": true }
+    ]
   }
 }
