@@ -2,7 +2,7 @@
 truncatesources: true
 cleancache: true
 keys:
-- {{.repoBaseURL}}gpg_public_key
+- {{.repoBaseURL}}/gpg_public_key
 repos:
 - deb {{.repoBaseURL}} trusty main
 - name: deb {{.repoBaseURL}} trusty-backports main

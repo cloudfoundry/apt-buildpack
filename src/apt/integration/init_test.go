@@ -8,7 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cloudfoundry/libbuildpack/cutlass"
+	"github.com/cloudfoundry/switchblade"
+	"github.com/onsi/gomega/format"
 	"github.com/sclevine/spec"
 	"github.com/sclevine/spec/report"
 
@@ -16,92 +17,63 @@ import (
 )
 
 var settings struct {
-	FixturePath      string
-	BuildpackPath    string
-	BuildpackVersion string
-	Platform         string
-	GitHubToken      string
+	Cached      bool
+	Serial      bool
+	GitHubToken string
+	Platform    string
 }
 
 func init() {
-	flag.StringVar(&settings.Platform, "platform", "", "platform to run switchblade tests against")
-	flag.StringVar(&settings.GitHubToken, "github-token", "", "GitHub token used for API requests")
-	flag.StringVar(&settings.BuildpackVersion, "version", "", "version to use (builds if empty)")
-	flag.BoolVar(&cutlass.Cached, "cached", true, "cached buildpack")
-	flag.StringVar(&cutlass.DefaultMemory, "memory", "128M", "default memory for pushed apps")
-	flag.StringVar(&cutlass.DefaultDisk, "disk", "256M", "default disk for pushed apps")
+	flag.BoolVar(&settings.Cached, "cached", false, "run cached buildpack tests")
+	flag.BoolVar(&settings.Serial, "serial", false, "run serial buildpack tests")
+	flag.StringVar(&settings.GitHubToken, "github-token", "", "use the token to make GitHub API requests")
+	flag.StringVar(&settings.Platform, "platform", "cf", `switchblade platform to test against ("cf" or "docker")`)
 }
 
 func TestIntegration(t *testing.T) {
-	var (
-		Expect     = NewWithT(t).Expect
-		Eventually = NewWithT(t).Eventually
+	Expect := NewWithT(t).Expect
+	format.MaxLength = 0
+	SetDefaultEventuallyTimeout(10 * time.Second)
 
-		packagedBuildpack cutlass.VersionedBuildpackPackage
-		err               error
-	)
-
-	if settings.BuildpackVersion == "" {
-		packagedBuildpack, err = cutlass.PackageUniquelyVersionedBuildpack(os.Getenv("CF_STACK"), true)
-		Expect(err).NotTo(HaveOccurred())
-
-		settings.BuildpackVersion = packagedBuildpack.Version
-	}
-
-	settings.BuildpackPath, err = cutlass.FindRoot()
+	platform, err := switchblade.NewPlatform(settings.Platform, settings.GitHubToken)
 	Expect(err).NotTo(HaveOccurred())
 
-	Expect(cutlass.CopyCfHome()).To(Succeed())
-	cutlass.SeedRandom()
-
-	repo := cutlass.New(filepath.Join(settings.BuildpackPath, "fixtures", "repo"))
-	defer repo.Destroy()
-
-	repo.Buildpacks = []string{"https://github.com/cloudfoundry/staticfile-buildpack#master"}
-	Expect(repo.Push()).To(Succeed())
-	Eventually(func() ([]string, error) { return repo.InstanceStates() }, 20*time.Second).Should(Equal([]string{"RUNNING"}))
-
-	url, err := repo.GetUrl("/")
+	root, err := filepath.Abs("./../../..")
 	Expect(err).NotTo(HaveOccurred())
 
-	template, err := template.ParseFiles(filepath.Join(settings.BuildpackPath, "fixtures", "simple", "apt.yml"))
-	Expect(err).ToNot(HaveOccurred())
-
-	settings.FixturePath, err = cutlass.CopyFixture(filepath.Join(settings.BuildpackPath, "fixtures", "simple"))
-	Expect(err).NotTo(HaveOccurred())
-	defer os.RemoveAll(settings.FixturePath)
-
-	file, err := os.Create(filepath.Join(settings.FixturePath, "apt.yml"))
+	err = platform.Initialize(switchblade.Buildpack{
+		Name: "apt_buildpack",
+		URI:  os.Getenv("BUILDPACK_FILE"),
+	})
 	Expect(err).NotTo(HaveOccurred())
 
-	Expect(template.Execute(file, map[string]string{"repoBaseURL": url})).To(Succeed())
+	repoName, err := switchblade.RandomName()
+	Expect(err).NotTo(HaveOccurred())
+
+	repoDeployment, _, err := platform.Deploy.
+		WithBuildpacks("staticfile_buildpack").
+		Execute(repoName, filepath.Join(root, "fixtures", "repo"))
+	Expect(err).NotTo(HaveOccurred())
+
+	template, err := template.ParseFiles(filepath.Join(root, "fixtures", "simple", "apt.yml"))
+	Expect(err).NotTo(HaveOccurred())
+
+	fixturePath, err := switchblade.Source(filepath.Join(root, "fixtures", "simple"))
+	Expect(err).NotTo(HaveOccurred())
+	defer os.RemoveAll(fixturePath)
+
+	file, err := os.Create(filepath.Join(fixturePath, "apt.yml"))
+	Expect(err).NotTo(HaveOccurred())
+
+	Expect(template.Execute(file, map[string]string{"repoBaseURL": repoDeployment.InternalURL})).To(Succeed())
 	Expect(file.Close()).To(Succeed())
 
 	suite := spec.New("Integration", spec.Report(report.Terminal{}), spec.Parallel())
-	suite("Default", testDefault)
-	suite("PrivateRepo", testPrivateRepo)
-	suite("Failure", testFailure)
+	suite("Default", testDefault(platform, fixturePath))
+	suite("PrivateRepo", testPrivateRepo(platform, fixturePath))
+	suite("Failure", testFailure(platform, fixturePath))
 	suite.Run(t)
 
-	Expect(cutlass.RemovePackagedBuildpack(packagedBuildpack)).To(Succeed())
-	Expect(cutlass.DeleteOrphanedRoutes()).To(Succeed())
-}
-
-func PushAppAndConfirm(t *testing.T, app *cutlass.App) {
-	var (
-		Expect     = NewWithT(t).Expect
-		Eventually = NewWithT(t).Eventually
-	)
-
-	Expect(app.Push()).To(Succeed())
-	Eventually(func() ([]string, error) { return app.InstanceStates() }, 20*time.Second).Should(Equal([]string{"RUNNING"}))
-	Expect(app.ConfirmBuildpack(settings.BuildpackVersion)).To(Succeed())
-}
-
-func DestroyApp(app *cutlass.App) *cutlass.App {
-	if app != nil {
-		app.Destroy()
-	}
-
-	return nil
+	Expect(platform.Delete.Execute(repoName)).To(Succeed())
+	Expect(os.Remove(os.Getenv("BUILDPACK_FILE"))).To(Succeed())
 }

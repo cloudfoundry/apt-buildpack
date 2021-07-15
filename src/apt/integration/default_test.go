@@ -3,41 +3,50 @@ package integration_test
 import (
 	"testing"
 
-	"github.com/cloudfoundry/libbuildpack/cutlass"
+	"github.com/cloudfoundry/switchblade"
 	"github.com/sclevine/spec"
 
+	. "github.com/cloudfoundry/switchblade/matchers"
 	. "github.com/onsi/gomega"
 )
 
-func testDefault(t *testing.T, context spec.G, it spec.S) {
-	var (
-		Expect = NewWithT(t).Expect
+func testDefault(platform switchblade.Platform, fixturePath string) func(*testing.T, spec.G, spec.S) {
+	return func(t *testing.T, context spec.G, it spec.S) {
+		var (
+			Expect     = NewWithT(t).Expect
+			Eventually = NewWithT(t).Eventually
 
-		app *cutlass.App
-	)
+			name string
+		)
 
-	it.After(func() {
-		app = DestroyApp(app)
-	})
+		it.Before(func() {
+			var err error
+			name, err = switchblade.RandomName()
+			Expect(err).NotTo(HaveOccurred())
+		})
 
-	it("supplies apt packages to later buildpacks", func() {
-		app = cutlass.New(settings.FixturePath)
-		app.Buildpacks = []string{"apt_buildpack", "https://github.com/cloudfoundry/binary-buildpack#master"}
-		app.SetEnv("BP_DEBUG", "1")
+		it.After(func() {
+			Expect(platform.Delete.Execute(name)).To(Succeed())
+		})
 
-		PushAppAndConfirm(t, app)
-		Expect(app.Stdout.String()).To(ContainSubstring("Installing apt packages"))
+		it("supplies apt packages to later buildpacks", func() {
+			deployment, logs, err := platform.Deploy.
+				WithBuildpacks("apt_buildpack", "binary_buildpack").
+				WithEnv(map[string]string{"BP_DEBUG": "1"}).
+				Execute(name, fixturePath)
+			Expect(err).NotTo(HaveOccurred())
 
-		// authenticating the apt packages
-		Expect(app.Stdout.String()).NotTo(ContainSubstring("The following packages cannot be authenticated"))
+			Expect(logs).To(ContainLines(ContainSubstring("Installing apt packages")))
+			Expect(logs).NotTo(ContainLines(ContainSubstring("The following packages cannot be authenticated")))
 
-		// installing packages from the default repo
-		Expect(app.GetBody("/bosh")).To(ContainSubstring("BOSH: version 2"))
+			// installing packages from the default repo
+			Eventually(deployment).Should(Serve(ContainSubstring("BOSH: version 2")).WithEndpoint("/bosh"))
 
-		// installing packages from a specific file location
-		Expect(app.GetBody("/jq")).To(ContainSubstring("Jq: jq-1."))
+			// installing packages from a specific file location
+			Eventually(deployment).Should(Serve(ContainSubstring("Jq: jq-1")).WithEndpoint("/jq"))
 
-		// installing a package from a specific repository with a lower priority
-		Expect(app.GetBody("/cf")).To(ContainSubstring("cf version 6.38.0+7ddf0aadd.2018-08-07"))
-	})
+			// installing a package from a specific repository with a lower priority
+			Eventually(deployment).Should(Serve(ContainSubstring("cf version 6.38.0+7ddf0aadd.2018-08-07")).WithEndpoint("/cf"))
+		})
+	}
 }
