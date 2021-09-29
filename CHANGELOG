@@ -1,3 +1,14 @@
+v0.2.7 Sep 29, 2021
+====================
+
+* Update libbuildpack
+
+* Adds integration testing matrix
+  - factors our integration repo into before suite setup
+
+* Rewrites integration suite using spec
+
+
 v0.2.6 Jun 11, 2021
 ====================
 
