@@ -89,6 +89,7 @@ function specs::ginkgo::run(){
   serial_flag="${3}"
   buildpack_file="${4}"
 
+  PATH="${ROOTDIR}/.bin":${PATH} \
   CF_STACK="${CF_STACK:-"${stack}"}" \
   BUILDPACK_FILE="${BUILDPACK_FILE:-"${buildpack_file}"}" \
     ginkgo \
