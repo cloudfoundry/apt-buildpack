@@ -5,7 +5,7 @@ require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.14.0
+	github.com/onsi/gomega v1.16.0
 	github.com/pkg/errors v0.9.1
 	github.com/sclevine/spec v1.4.0
 	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
