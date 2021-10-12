@@ -1,7 +1,7 @@
 module github.com/cloudfoundry/apt-buildpack
 
 require (
-	github.com/cloudfoundry/libbuildpack v0.0.0-20210726164432-80929621d448
+	github.com/cloudfoundry/libbuildpack v0.0.0-20211012151659-ed6fb71f47bf
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo v1.16.5
