@@ -19,9 +19,13 @@ var settings struct {
 	FixturePath      string
 	BuildpackPath    string
 	BuildpackVersion string
+	Platform         string
+	GitHubToken      string
 }
 
 func init() {
+	flag.StringVar(&settings.Platform, "platform", "", "platform to run switchblade tests against")
+	flag.StringVar(&settings.GitHubToken, "github-token", "", "GitHub token used for API requests")
 	flag.StringVar(&settings.BuildpackVersion, "version", "", "version to use (builds if empty)")
 	flag.BoolVar(&cutlass.Cached, "cached", true, "cached buildpack")
 	flag.StringVar(&cutlass.DefaultMemory, "memory", "128M", "default memory for pushed apps")
