@@ -5,36 +5,57 @@
 package apt_test
 
 import (
-	gomock "github.com/golang/mock/gomock"
 	io "io"
 	reflect "reflect"
+
+	gomock "github.com/golang/mock/gomock"
 )
 
-// MockCommand is a mock of Command interface
+// MockCommand is a mock of Command interface.
 type MockCommand struct {
 	ctrl     *gomock.Controller
 	recorder *MockCommandMockRecorder
 }
 
-// MockCommandMockRecorder is the mock recorder for MockCommand
+// MockCommandMockRecorder is the mock recorder for MockCommand.
 type MockCommandMockRecorder struct {
 	mock *MockCommand
 }
 
-// NewMockCommand creates a new mock instance
+// NewMockCommand creates a new mock instance.
 func NewMockCommand(ctrl *gomock.Controller) *MockCommand {
 	mock := &MockCommand{ctrl: ctrl}
 	mock.recorder = &MockCommandMockRecorder{mock}
 	return mock
 }
 
-// EXPECT returns an object that allows the caller to indicate expected use
+// EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockCommand) EXPECT() *MockCommandMockRecorder {
 	return m.recorder
 }
 
-// Output mocks base method
+// Execute mocks base method.
+func (m *MockCommand) Execute(dir string, stdout, stderr io.Writer, program string, args ...string) error {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{dir, stdout, stderr, program}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Execute", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Execute indicates an expected call of Execute.
+func (mr *MockCommandMockRecorder) Execute(dir, stdout, stderr, program interface{}, args ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{dir, stdout, stderr, program}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockCommand)(nil).Execute), varargs...)
+}
+
+// Output mocks base method.
 func (m *MockCommand) Output(arg0, arg1 string, arg2 ...string) (string, error) {
+	m.ctrl.T.Helper()
 	varargs := []interface{}{arg0, arg1}
 	for _, a := range arg2 {
 		varargs = append(varargs, a)
@@ -45,25 +66,9 @@ func (m *MockCommand) Output(arg0, arg1 string, arg2 ...string) (string, error) 
 	return ret0, ret1
 }
 
-// Output indicates an expected call of Output
+// Output indicates an expected call of Output.
 func (mr *MockCommandMockRecorder) Output(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Output", reflect.TypeOf((*MockCommand)(nil).Output), varargs...)
-}
-
-// Execute mocks base method
-func (m *MockCommand) Execute(dir string, stdout, stderr io.Writer, program string, args ...string) error {
-	varargs := []interface{}{dir, stdout, stderr, program}
-	for _, a := range args {
-		varargs = append(varargs, a)
-	}
-	ret := m.ctrl.Call(m, "Execute", varargs...)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// Execute indicates an expected call of Execute
-func (mr *MockCommandMockRecorder) Execute(dir, stdout, stderr, program interface{}, args ...interface{}) *gomock.Call {
-	varargs := append([]interface{}{dir, stdout, stderr, program}, args...)
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Execute", reflect.TypeOf((*MockCommand)(nil).Execute), varargs...)
 }

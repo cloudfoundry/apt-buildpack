@@ -36,6 +36,10 @@ func testDefault(platform switchblade.Platform, fixturePath string) func(*testin
 				Execute(name, fixturePath)
 			Expect(err).NotTo(HaveOccurred())
 
+			Expect(logs).To(ContainLines(ContainSubstring("Downloading apt packages")))
+			Expect(logs).To(ContainLines(ContainSubstring("The following NEW packages will be installed:")))
+			Expect(logs).To(ContainLines(ContainSubstring("bosh-cli cf-cli")))
+
 			Expect(logs).To(ContainLines(ContainSubstring("Installing apt packages")))
 			Expect(logs).NotTo(ContainLines(ContainSubstring("The following packages cannot be authenticated")))
 
