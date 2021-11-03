@@ -1,6 +1,7 @@
 package apt_test
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -26,11 +27,15 @@ var _ = Describe("Apt", func() {
 		rootDir     string
 		cacheDir    string
 		installDir  string
+		logger      *libbuildpack.Logger
+		buffer      *bytes.Buffer
 	)
 
 	BeforeEach(func() {
 		bpDir, err := cutlass.FindRoot()
 		Expect(err).NotTo(HaveOccurred())
+		buffer = new(bytes.Buffer)
+		logger = libbuildpack.NewLogger(buffer)
 
 		aptFile = filepath.Join(bpDir, "fixtures", "unit", "aptFile.yml")
 		rootDir, _ = ioutil.TempDir("", "rootdir")
@@ -46,7 +51,7 @@ var _ = Describe("Apt", func() {
 	})
 
 	JustBeforeEach(func() {
-		a = apt.New(mockCommand, aptFile, rootDir, cacheDir, installDir)
+		a = apt.New(mockCommand, aptFile, rootDir, cacheDir, installDir, logger)
 	})
 
 	AfterEach(func() {
