@@ -1,3 +1,9 @@
+v0.2.9 Nov 22, 2021
+====================
+
+* Add logging for apt commands to give insights into what's happening
+
+
 v0.2.8 Oct 19, 2021
 ====================
 
