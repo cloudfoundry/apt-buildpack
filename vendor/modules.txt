@@ -7,7 +7,7 @@ github.com/Microsoft/go-winio
 github.com/Microsoft/go-winio/pkg/guid
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
-# github.com/cloudfoundry/libbuildpack v0.0.0-20211201073524-877368d188fd
+# github.com/cloudfoundry/libbuildpack v0.0.0-20211207004218-1ef25b7c793a
 ## explicit
 github.com/cloudfoundry/libbuildpack
 github.com/cloudfoundry/libbuildpack/bratshelper
@@ -60,7 +60,7 @@ github.com/elazarl/goproxy
 # github.com/fsnotify/fsnotify v1.5.1
 ## explicit
 github.com/fsnotify/fsnotify
-# github.com/gabriel-vasile/mimetype v1.3.1
+# github.com/gabriel-vasile/mimetype v1.4.0
 github.com/gabriel-vasile/mimetype
 github.com/gabriel-vasile/mimetype/internal/charset
 github.com/gabriel-vasile/mimetype/internal/json
@@ -123,7 +123,7 @@ github.com/opencontainers/go-digest
 # github.com/opencontainers/image-spec v1.0.1
 github.com/opencontainers/image-spec/specs-go
 github.com/opencontainers/image-spec/specs-go/v1
-# github.com/paketo-buildpacks/packit v0.14.3
+# github.com/paketo-buildpacks/packit v1.3.1
 github.com/paketo-buildpacks/packit/fs
 github.com/paketo-buildpacks/packit/pexec
 github.com/paketo-buildpacks/packit/vacation
@@ -155,7 +155,7 @@ golang.org/x/net/html/atom
 golang.org/x/net/html/charset
 golang.org/x/net/internal/socks
 golang.org/x/net/proxy
-# golang.org/x/sys v0.0.0-20211205182925-97ca703d548d
+# golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e
 ## explicit
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
