@@ -2,7 +2,7 @@
 code.cloudfoundry.org/lager
 # github.com/Masterminds/semver v1.5.0
 github.com/Masterminds/semver
-# github.com/Microsoft/go-winio v0.4.14
+# github.com/Microsoft/go-winio v0.5.1
 github.com/Microsoft/go-winio
 github.com/Microsoft/go-winio/pkg/guid
 # github.com/blang/semver v3.5.1+incompatible
@@ -15,16 +15,16 @@ github.com/cloudfoundry/libbuildpack/cutlass
 github.com/cloudfoundry/libbuildpack/cutlass/docker
 github.com/cloudfoundry/libbuildpack/cutlass/glow
 github.com/cloudfoundry/libbuildpack/packager
-# github.com/cloudfoundry/switchblade v0.0.4
+# github.com/cloudfoundry/switchblade v0.0.5
 ## explicit
 github.com/cloudfoundry/switchblade
 github.com/cloudfoundry/switchblade/internal/cloudfoundry
 github.com/cloudfoundry/switchblade/internal/docker
 github.com/cloudfoundry/switchblade/matchers
-# github.com/docker/distribution v2.7.1+incompatible
+# github.com/docker/distribution v2.8.0+incompatible
 github.com/docker/distribution/digestset
 github.com/docker/distribution/reference
-# github.com/docker/docker v20.10.15+incompatible
+# github.com/docker/docker v20.10.17+incompatible
 github.com/docker/docker/api
 github.com/docker/docker/api/types
 github.com/docker/docker/api/types/blkiodev
@@ -53,7 +53,6 @@ github.com/docker/go-units
 # github.com/elazarl/goproxy v0.0.0-20190911111923-ecfe977594f1
 github.com/elazarl/goproxy
 # github.com/fsnotify/fsnotify v1.5.1
-## explicit
 github.com/fsnotify/fsnotify
 # github.com/gabriel-vasile/mimetype v1.4.0
 github.com/gabriel-vasile/mimetype
@@ -67,8 +66,6 @@ github.com/gogo/protobuf/proto
 github.com/golang/mock/gomock
 # github.com/golang/protobuf v1.5.2
 github.com/golang/protobuf/proto
-# github.com/konsorten/go-windows-terminal-sequences v1.0.3
-github.com/konsorten/go-windows-terminal-sequences
 # github.com/nxadm/tail v1.4.8
 github.com/nxadm/tail
 github.com/nxadm/tail/ratelimiter
@@ -112,20 +109,22 @@ github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
 # github.com/opencontainers/go-digest v1.0.0
 github.com/opencontainers/go-digest
-# github.com/opencontainers/image-spec v1.0.2
+# github.com/opencontainers/image-spec v1.0.3-0.20220114050600-8b9d41f48198
 github.com/opencontainers/image-spec/specs-go
 github.com/opencontainers/image-spec/specs-go/v1
 # github.com/paketo-buildpacks/packit v1.3.1
-github.com/paketo-buildpacks/packit/fs
 github.com/paketo-buildpacks/packit/pexec
-github.com/paketo-buildpacks/packit/vacation
+# github.com/paketo-buildpacks/packit/v2 v2.3.0
+github.com/paketo-buildpacks/packit/v2/fs
+github.com/paketo-buildpacks/packit/v2/pexec
+github.com/paketo-buildpacks/packit/v2/vacation
 # github.com/pkg/errors v0.9.1
 github.com/pkg/errors
 # github.com/sclevine/spec v1.4.0
 ## explicit
 github.com/sclevine/spec
 github.com/sclevine/spec/report
-# github.com/sirupsen/logrus v1.6.0
+# github.com/sirupsen/logrus v1.8.1
 github.com/sirupsen/logrus
 # github.com/teris-io/shortid v0.0.0-20201117134242-e59966efd125
 github.com/teris-io/shortid
@@ -169,7 +168,7 @@ golang.org/x/text/internal/utf8internal
 golang.org/x/text/language
 golang.org/x/text/runes
 golang.org/x/text/transform
-# google.golang.org/protobuf v1.26.0
+# google.golang.org/protobuf v1.27.1
 google.golang.org/protobuf/encoding/prototext
 google.golang.org/protobuf/encoding/protowire
 google.golang.org/protobuf/internal/descfmt
