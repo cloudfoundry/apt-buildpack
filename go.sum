@@ -433,8 +433,8 @@ github.com/clbanning/x2j v0.0.0-20191024224557-825249438eec/go.mod h1:jMjuTZXRI4
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cloudfoundry/libbuildpack v0.0.0-20220509111721-05ef1d6ca1f1 h1:vDw1iAfVJP52DSdoJcZpbxnte+PHiJyypne6qQsGNY0=
 github.com/cloudfoundry/libbuildpack v0.0.0-20220509111721-05ef1d6ca1f1/go.mod h1:ivYG30Pn6bRWie/IhgMsHktIKidJOTtsWzx/CYO4Bpw=
-github.com/cloudfoundry/switchblade v0.0.5 h1:eSHTrMTLpHq7+kZDYMK302LWHorwI+/IlseCIv1a4W0=
-github.com/cloudfoundry/switchblade v0.0.5/go.mod h1:cavaT2on4wA1XHZck2kTnqh43nPbKPD6EsmDMRi3Uhs=
+github.com/cloudfoundry/switchblade v0.0.6 h1:cnlf5Sy50ELBX459NEjwgXlrD+kaV4k3C/xph9DtYWA=
+github.com/cloudfoundry/switchblade v0.0.6/go.mod h1:cavaT2on4wA1XHZck2kTnqh43nPbKPD6EsmDMRi3Uhs=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/cncf/udpa/go v0.0.0-20200629203442-efcf912fb354/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=
 github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod h1:WmhPx2Nbnhtbo57+VJT5O0JRkEi1Wbu0z5j0R8u5Hbk=

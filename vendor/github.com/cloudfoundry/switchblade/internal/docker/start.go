@@ -56,7 +56,7 @@ func (s Start) Run(ctx context.Context, logs io.Writer, name, command string) (s
 		"LANG=en_US.UTF-8",
 		"MEMORY_LIMIT=1024m",
 		"PORT=8080",
-		fmt.Sprintf(`VCAP_APPLICATION={"application_name":%[1]q,"name":%[1]q,"process_type":"web"}`, name),
+		fmt.Sprintf(`VCAP_APPLICATION={"application_name":%[1]q,"name":%[1]q,"process_type":"web","limits":{"mem":1024}}`, name),
 		"VCAP_PLATFORM_OPTIONS={}",
 	}
 	for key, value := range s.env {
