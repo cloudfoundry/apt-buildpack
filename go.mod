@@ -7,7 +7,6 @@ require (
 	github.com/cloudfoundry/switchblade v0.0.6
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.19.0
+	github.com/onsi/gomega v1.20.0
 	github.com/sclevine/spec v1.4.0
-	golang.org/x/sys v0.0.0-20220329152356-43be30ef3008 // indirect
 )
