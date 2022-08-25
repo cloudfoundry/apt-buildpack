@@ -37,7 +37,7 @@ func TestIntegration(t *testing.T) {
 	format.MaxLength = 0
 	SetDefaultEventuallyTimeout(10 * time.Second)
 
-	platform, err := switchblade.NewPlatform(settings.Platform, settings.GitHubToken)
+	platform, err := switchblade.NewPlatform(settings.Platform, settings.GitHubToken, settings.Stack)
 	Expect(err).NotTo(HaveOccurred())
 
 	root, err := filepath.Abs("./../../..")
