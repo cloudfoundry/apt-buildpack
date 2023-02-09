@@ -3,7 +3,7 @@ module github.com/cloudfoundry/apt-buildpack
 go 1.19
 
 require (
-	github.com/cloudfoundry/libbuildpack v0.0.0-20230125143612-7c0e60008921
+	github.com/cloudfoundry/libbuildpack v0.0.0-20230202173042-e0fe4bc5c1ef
 	github.com/cloudfoundry/switchblade v0.1.2
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo v1.16.5
