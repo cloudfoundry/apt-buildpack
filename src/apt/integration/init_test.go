@@ -2,8 +2,10 @@ package integration_test
 
 import (
 	"flag"
+	"fmt"
 	"html/template"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 	"time"
@@ -51,6 +53,19 @@ func TestIntegration(t *testing.T) {
 
 	repoName, err := switchblade.RandomName()
 	Expect(err).NotTo(HaveOccurred())
+
+	// tech debt alert!
+	// remove this block when testing envs come with cflinuxfs4
+	// enabled staticfile & binary buildpacks.
+	if os.Getenv("CF_STACK") == "cflinuxfs4" {
+		command := exec.Command("cf", "create-buildpack", "staticfile_buildpack", "https://github.com/cloudfoundry/staticfile-buildpack/releases/download/v1.6.0/staticfile-buildpack-cflinuxfs4-v1.6.0.zip", "1", "--enable")
+		data, err := command.CombinedOutput()
+		Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create staticfile_buildpack:\n%s\n%v", string(data), err))
+
+		command = exec.Command("cf", "create-buildpack", "binary_buildpack", "https://github.com/cloudfoundry/binary-buildpack/releases/download/v1.1.3/binary-buildpack-cflinuxfs4-v1.1.3.zip", "1", "--enable")
+		data, err = command.CombinedOutput()
+		Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create binary_buildpack:\n%s\n%v", string(data), err))
+	}
 
 	repoDeployment, _, err := platform.Deploy.
 		WithBuildpacks("staticfile_buildpack").
