@@ -1,3 +1,13 @@
+v0.3.0 Mar 17, 2023
+=====================
+
+* includes support for cflinuxfs4
+
+* tests: temporarily install fs4 compatible static/binary BPs
+
+* Update libbuildpack
+
+
 v0.2.15 Mar 02, 2023
 =====================
 
