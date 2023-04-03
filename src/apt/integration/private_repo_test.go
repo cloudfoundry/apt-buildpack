@@ -31,7 +31,7 @@ func testPrivateRepo(platform switchblade.Platform, fixturePath string) func(*te
 
 		it("doesn't navigate to Canonical", func() {
 			deployment, logs, err := platform.Deploy.
-				WithBuildpacks("apt_buildpack", "binary_buildpack").
+				WithBuildpacks("apt_buildpack", "ruby_buildpack", "binary_buildpack").
 				WithEnv(map[string]string{"BP_DEBUG": "1"}).
 				WithoutInternetAccess().
 				Execute(name, fixturePath)
