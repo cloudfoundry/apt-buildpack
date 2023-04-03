@@ -57,15 +57,35 @@ func TestIntegration(t *testing.T) {
 	// tech debt alert!
 	// remove this block when testing envs come with cflinuxfs4
 	// enabled staticfile & binary buildpacks.
-	if os.Getenv("CF_STACK") == "cflinuxfs4" {
-		command := exec.Command("cf", "create-buildpack", "staticfile_buildpack", "https://github.com/cloudfoundry/staticfile-buildpack/releases/download/v1.6.0/staticfile-buildpack-cflinuxfs4-v1.6.0.zip", "1", "--enable")
-		data, err := command.CombinedOutput()
-		Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create staticfile_buildpack:\n%s\n%v", string(data), err))
+	if settings.Stack == "cflinuxfs4" {
+		err = platform.Initialize(switchblade.Buildpack{
+			Name: "staticfile_buildpack",
+			URI:  "https://github.com/cloudfoundry/staticfile-buildpack/releases/download/v1.6.0/staticfile-buildpack-cflinuxfs4-v1.6.0.zip",
+		})
+		Expect(err).NotTo(HaveOccurred())
 
-		command = exec.Command("cf", "create-buildpack", "binary_buildpack", "https://github.com/cloudfoundry/binary-buildpack/releases/download/v1.1.3/binary-buildpack-cflinuxfs4-v1.1.3.zip", "1", "--enable")
-		data, err = command.CombinedOutput()
-		Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create binary_buildpack:\n%s\n%v", string(data), err))
+		err = platform.Initialize(switchblade.Buildpack{
+			Name: "binary_buildpack",
+			URI:  "https://github.com/cloudfoundry/binary-buildpack/releases/download/v1.1.3/binary-buildpack-cflinuxfs4-v1.1.3.zip",
+		})
+		Expect(err).NotTo(HaveOccurred())
 	}
+
+	rubyTmpDir, err := os.MkdirTemp("", "ruby")
+	Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create tempdir: %v", err))
+
+	// We need a cached ruby-buildpack to run the simple web app in offline mode
+	// This builds a cached ruby-builpack to ${tmpDir}/ruby-buidpack.zip
+	command := exec.Command("scripts/build-ruby-offline-bp.sh", "--stack", settings.Stack, "--outputDir", rubyTmpDir)
+	command.Dir = root
+	data, err := command.CombinedOutput()
+	Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create cached ruby_buildpack:\n%s\n%v", string(data), err))
+
+	err = platform.Initialize(switchblade.Buildpack{
+		Name: "ruby_buildpack",
+		URI:  filepath.Join(rubyTmpDir, "ruby-buildpack.zip"),
+	})
+	Expect(err).NotTo(HaveOccurred())
 
 	repoDeployment, _, err := platform.Deploy.
 		WithBuildpacks("staticfile_buildpack").
@@ -93,4 +113,5 @@ func TestIntegration(t *testing.T) {
 
 	Expect(platform.Delete.Execute(repoName)).To(Succeed())
 	Expect(os.Remove(os.Getenv("BUILDPACK_FILE"))).To(Succeed())
+	Expect(os.RemoveAll(rubyTmpDir)).To(Succeed())
 }
