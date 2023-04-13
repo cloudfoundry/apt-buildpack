@@ -25,6 +25,7 @@ var settings struct {
 	Platform    string
 	Stack       string
 }
+var rubyTmpDir, rubyBuildpackName string
 
 func init() {
 	flag.BoolVar(&settings.Cached, "cached", false, "run cached buildpack tests")
@@ -71,7 +72,7 @@ func TestIntegration(t *testing.T) {
 		Expect(err).NotTo(HaveOccurred())
 	}
 
-	rubyTmpDir, err := os.MkdirTemp("", "ruby")
+	rubyTmpDir, err = os.MkdirTemp("", "ruby")
 	Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create tempdir: %v", err))
 
 	// We need a cached ruby-buildpack to run the simple web app in offline mode
@@ -81,8 +82,9 @@ func TestIntegration(t *testing.T) {
 	data, err := command.CombinedOutput()
 	Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create cached ruby_buildpack:\n%s\n%v", string(data), err))
 
+	rubyBuildpackName = fmt.Sprintf("%s_buildpack", filepath.Base(rubyTmpDir))
 	err = platform.Initialize(switchblade.Buildpack{
-		Name: "ruby_buildpack",
+		Name: rubyBuildpackName,
 		URI:  filepath.Join(rubyTmpDir, "ruby-buildpack.zip"),
 	})
 	Expect(err).NotTo(HaveOccurred())
