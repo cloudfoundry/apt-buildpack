@@ -31,7 +31,7 @@ func testDefault(platform switchblade.Platform, fixturePath string) func(*testin
 
 		it("supplies apt packages to later buildpacks", func() {
 			deployment, logs, err := platform.Deploy.
-				WithBuildpacks("apt_buildpack", "ruby_buildpack", "binary_buildpack").
+				WithBuildpacks("apt_buildpack", rubyBuildpackName, "binary_buildpack").
 				WithEnv(map[string]string{"BP_DEBUG": "1"}).
 				Execute(name, fixturePath)
 			Expect(err).NotTo(HaveOccurred())
