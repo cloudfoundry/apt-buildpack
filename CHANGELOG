@@ -1,3 +1,14 @@
+v0.3.1 Sep 20, 2023
+====================
+
+* integration/brats tests: do not depend on stack ruby as cflinuxfs4 1.x do not come
+  with ruby. Therefore use ruby-buildpack and install our own.
+
+* Update libbuildpack
+
+* Bump github.com/onsi/gomega from 1.27.4 to 1.27.6
+
+
 v0.3.0 Mar 17, 2023
 =====================
 
