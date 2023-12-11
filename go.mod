@@ -3,7 +3,7 @@ module github.com/cloudfoundry/apt-buildpack
 go 1.19
 
 require (
-	github.com/cloudfoundry/libbuildpack v0.0.0-20230331144814-0b11b8e0551a
+	github.com/cloudfoundry/libbuildpack v0.0.0-20230404152448-8da916cb09fe
 	github.com/cloudfoundry/switchblade v0.2.0
 	github.com/golang/mock v1.6.0
 	github.com/onsi/ginkgo v1.16.5
@@ -16,6 +16,7 @@ require (
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
+	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/docker/distribution v2.8.1+incompatible // indirect
 	github.com/docker/docker v23.0.1+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
