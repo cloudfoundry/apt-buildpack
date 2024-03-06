@@ -12,10 +12,15 @@ source "${ROOTDIR}/scripts/.util/print.sh"
 function main() {
   local stack
   stack="cflinuxfs4"
-  outputDir="${ROOTDIR}/build/ruby-buildpack"
+  outputDir="${ROOTDIR}/build/buildpacks"
 
   while [[ "${#}" != 0 ]]; do
     case "${1}" in
+      --buildpack)
+        buildpack="${2}"
+        shift 2
+        ;;
+
       --stack)
         stack="${2}"
         shift 2
@@ -38,11 +43,11 @@ function main() {
 
   mkdir -p "${outputDir}"
   pushd "${outputDir}" > /dev/null
-    util::print::info "Dowloading ruby-buildpack..."
-    curl -sJL -o ruby_buildpack_src.zip "https://github.com/cloudfoundry/ruby-buildpack/archive/refs/heads/master.zip"
-    unzip -q ruby_buildpack_src.zip
-    cd ruby-buildpack-master
-    ./scripts/package.sh --version 1.2.3 --stack "${stack}" --cached --output "${outputDir}/ruby-buildpack.zip"
+    util::print::info "Dowloading ${buildpack} buildpack ..."
+    curl -sJL -o "${buildpack}_buildpack_src.zip" "https://github.com/cloudfoundry/${buildpack}-buildpack/archive/refs/heads/master.zip"
+    unzip -q "${buildpack}_buildpack_src.zip"
+    cd "${buildpack}-buildpack-master"
+    ./scripts/package.sh --version 1.2.3 --stack "${stack}" --cached --output "${outputDir}/${buildpack}-buildpack.zip"
   popd
 }
 
