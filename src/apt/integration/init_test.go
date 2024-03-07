@@ -25,7 +25,8 @@ var settings struct {
 	Platform    string
 	Stack       string
 }
-var rubyTmpDir, rubyBuildpackName string
+
+var rubyBuildpackFolder, staticfileBuildpackFolder, binaryBuildpackFolder string
 
 func init() {
 	flag.BoolVar(&settings.Cached, "cached", false, "run cached buildpack tests")
@@ -40,36 +41,48 @@ func TestIntegration(t *testing.T) {
 	format.MaxLength = 0
 	SetDefaultEventuallyTimeout(10 * time.Second)
 
-	platform, err := switchblade.NewPlatform(settings.Platform, settings.GitHubToken, settings.Stack)
-	Expect(err).NotTo(HaveOccurred())
-
 	root, err := filepath.Abs("./../../..")
 	Expect(err).NotTo(HaveOccurred())
 
-	err = platform.Initialize(switchblade.Buildpack{
-		Name: "apt_buildpack",
-		URI:  os.Getenv("BUILDPACK_FILE"),
-	})
+	platform, err := switchblade.NewPlatform(settings.Platform, settings.GitHubToken, settings.Stack)
 	Expect(err).NotTo(HaveOccurred())
+
+	rubyBuildpackFolder, err = prepareRequiredBuildpack("ruby", root)
+	Expect(err).NotTo(HaveOccurred())
+
+	err = platform.Initialize(
+		switchblade.Buildpack{
+			Name: "apt_buildpack",
+			URI:  os.Getenv("BUILDPACK_FILE"),
+		},
+		switchblade.Buildpack{
+			Name: "ruby_buildpack",
+			URI:  filepath.Join(rubyBuildpackFolder, "ruby-buildpack.zip"),
+		},
+	)
+	Expect(err).NotTo(HaveOccurred())
+
+	if os.Getenv("CF_STACK") == "cflinuxfs3" {
+		staticfileBuildpackFolder, err = prepareRequiredBuildpack("staticfile", root)
+		Expect(err).NotTo(HaveOccurred())
+
+		binaryBuildpackFolder, err = prepareRequiredBuildpack("binary", root)
+		Expect(err).NotTo(HaveOccurred())
+
+		err = platform.Initialize(
+			switchblade.Buildpack{
+				Name: "staticfile_buildpack",
+				URI:  filepath.Join(staticfileBuildpackFolder, "staticfile-buildpack.zip"),
+			},
+			switchblade.Buildpack{
+				Name: "binary_buildpack",
+				URI:  filepath.Join(binaryBuildpackFolder, "binary-buildpack.zip"),
+			},
+		)
+		Expect(err).NotTo(HaveOccurred())
+	}
 
 	repoName, err := switchblade.RandomName()
-	Expect(err).NotTo(HaveOccurred())
-
-	rubyTmpDir, err = os.MkdirTemp("", "ruby")
-	Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create tempdir: %v", err))
-
-	// We need a cached ruby-buildpack to run the simple web app in offline mode
-	// This builds a cached ruby-builpack to ${tmpDir}/ruby-buidpack.zip
-	command := exec.Command("scripts/build-ruby-offline-bp.sh", "--stack", settings.Stack, "--outputDir", rubyTmpDir)
-	command.Dir = root
-	data, err := command.CombinedOutput()
-	Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create cached ruby_buildpack:\n%s\n%v", string(data), err))
-
-	rubyBuildpackName = fmt.Sprintf("%s_buildpack", filepath.Base(rubyTmpDir))
-	err = platform.Initialize(switchblade.Buildpack{
-		Name: rubyBuildpackName,
-		URI:  filepath.Join(rubyTmpDir, "ruby-buildpack.zip"),
-	})
 	Expect(err).NotTo(HaveOccurred())
 
 	repoDeployment, _, err := platform.Deploy.
@@ -98,5 +111,26 @@ func TestIntegration(t *testing.T) {
 
 	Expect(platform.Delete.Execute(repoName)).To(Succeed())
 	Expect(os.Remove(os.Getenv("BUILDPACK_FILE"))).To(Succeed())
-	Expect(os.RemoveAll(rubyTmpDir)).To(Succeed())
+	Expect(os.RemoveAll(rubyBuildpackFolder)).To(Succeed())
+
+	if os.Getenv("CF_STACK") == "cflinuxfs3" {
+		Expect(os.RemoveAll(staticfileBuildpackFolder)).To(Succeed())
+		Expect(os.RemoveAll(binaryBuildpackFolder)).To(Succeed())
+	}
+}
+
+func prepareRequiredBuildpack(buildpack, root string) (string, error) {
+	buildpackTmpDir, err := os.MkdirTemp("", buildpack)
+	if err != nil {
+		return "", fmt.Errorf("failed to create temp dir: %s", err)
+	}
+
+	command := exec.Command("scripts/build-offline-bp.sh", "--buildpack", buildpack, "--stack", settings.Stack, "--outputDir", buildpackTmpDir)
+	command.Dir = root
+	data, err := command.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("failed to prepare buildpack: %s", data)
+	}
+
+	return buildpackTmpDir, nil
 }
