@@ -40,7 +40,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 
 	// We need a cached ruby-buildpack to run the simple web app in offline mode
 	// This builds a cached ruby-builpack to ${tmpDir}/ruby-buidpack.zip
-	command := exec.Command("scripts/build-ruby-offline-bp.sh", "--stack", os.Getenv("CF_STACK"), "--outputDir", rubyTmpDir)
+	command := exec.Command("scripts/build-offline-bp.sh", "--buildpack", "ruby", "--stack", os.Getenv("CF_STACK"), "--outputDir", rubyTmpDir)
 	command.Dir = root
 	data, err := command.CombinedOutput()
 	Expect(err).NotTo(HaveOccurred(), fmt.Sprintf("Failed to create cached ruby_buildpack:\n%s\n%v", string(data), err))
