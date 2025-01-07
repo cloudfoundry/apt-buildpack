@@ -92,7 +92,7 @@ function main() {
     cached="$(jq -r -S .cached <<<"${row}")"
     parallel="$(jq -r -S .parallel <<<"${row}")"
 
-    echo "Running integration suite (cached: ${cached}, parallel: ${parallel})"
+    echo "Running integration suite (cached: ${cached}, parallel: ${parallel}, stack: ${stack})"
 
     specs::run "${cached}" "${parallel}" "${stack}" "${platform}" "${token:-}"
   done
