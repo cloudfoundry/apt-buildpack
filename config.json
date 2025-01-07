@@ -1,12 +1,15 @@
 {
-  "stack": "cflinuxfs3",
+  "stack": "cflinuxfs4",
   "oses": [
     "linux"
   ],
   "integration": {
     "harness": "switchblade",
     "matrix": [
-      { "cached": false, "parallel": true }
+      {
+        "cached": false,
+        "parallel": true
+      }
     ]
   }
 }
