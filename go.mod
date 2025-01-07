@@ -1,6 +1,6 @@
 module github.com/cloudfoundry/apt-buildpack
 
-go 1.22.5
+go 1.23.4
 
 require (
 	github.com/cloudfoundry/libbuildpack v0.0.0-20240717165421-f2ae8069fcba
