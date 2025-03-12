@@ -112,6 +112,7 @@ func TestIntegration(t *testing.T) {
 	Expect(platform.Delete.Execute(repoName)).To(Succeed())
 	Expect(os.Remove(os.Getenv("BUILDPACK_FILE"))).To(Succeed())
 	Expect(os.RemoveAll(rubyBuildpackFolder)).To(Succeed())
+	Expect(platform.Deinitialize()).To(Succeed())
 
 	if os.Getenv("CF_STACK") == "cflinuxfs3" {
 		Expect(os.RemoveAll(staticfileBuildpackFolder)).To(Succeed())
