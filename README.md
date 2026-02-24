@@ -36,6 +36,19 @@ This maybe needed in environment where ubuntu public repos are blocked.
 
 `cleancache` calls `apt-get clean` and `apt-get autoclean`. Useful to purge any cached content.
 
+### Behavior differences
+
+This buildpack does not run as `root`, so it does not install to the
+root filesystem (`/`), nor update the system `dpkg` status. 
+
+Packages are installed in `/home/vcap/deps/<IDX>/apt`, where `<IDX>`
+matches the position of the buildpack in the list of buildpacks
+(0 when this buildpack is the first buildpack).
+
+Any installation scripts (`preinst`, `postinst`, etc) are not executed, 
+so you may need to include those separately in a [supply
+buildpack](https://docs.cloudfoundry.org/buildpacks/understand-buildpacks.html#supply-script)
+
 #### Using a PPA
 
 It's possible to use a PPA, but you need to indicate the GPG key for the PPA and the full repo line, not just the PPA name.  
