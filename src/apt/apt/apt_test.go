@@ -48,17 +48,15 @@ var _ = Describe("Apt", func() {
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockCommand = NewMockCommand(mockCtrl)
+		DeferCleanup(func() {
+			os.Remove(aptFile)
+			os.RemoveAll(cacheDir)
+			os.RemoveAll(installDir)
+		})
 	})
 
 	JustBeforeEach(func() {
 		a = apt.New(mockCommand, aptFile, rootDir, cacheDir, installDir, logger)
-	})
-
-	AfterEach(func() {
-		os.Remove(aptFile)
-		os.RemoveAll(cacheDir)
-		os.RemoveAll(installDir)
-		mockCtrl.Finish()
 	})
 
 	Describe("Setup", func() {
@@ -292,11 +290,10 @@ var _ = Describe("Apt", func() {
 			Expect(a.Setup()).To(Succeed())
 
 			a.Packages = []string{fooFileUri, barFileUri}
-		})
-
-		AfterEach(func() {
-			fooServer.Close()
-			barServer.Close()
+			DeferCleanup(func() {
+				fooServer.Close()
+				barServer.Close()
+			})
 		})
 
 		It("downloads user specified packages using http get's", func() {

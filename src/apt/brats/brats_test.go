@@ -20,7 +20,7 @@ var _ = Describe("Apt supply buildpack", func() {
 		err    error
 	)
 
-	AfterEach(func() {
+	DeferCleanup(func() {
 		app = DestroyApp(app)
 		repo = DestroyApp(repo)
 		Expect(os.RemoveAll(appDir)).To(Succeed())
