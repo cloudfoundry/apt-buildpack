@@ -1,7 +1,6 @@
 package supply_test
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -36,7 +35,7 @@ var _ = Describe("Supply", func() {
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockStager = NewMockStager(mockCtrl)
-		depDir, err = ioutil.TempDir("", "apt.depdir")
+		depDir, err = os.MkdirTemp("", "apt.depdir")
 		Expect(err).ToNot(HaveOccurred())
 		mockStager.EXPECT().DepDir().AnyTimes().Return(depDir)
 		mockApt = NewMockApt(mockCtrl)

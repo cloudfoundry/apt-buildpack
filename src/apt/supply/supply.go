@@ -1,7 +1,6 @@
 package supply
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -117,7 +116,7 @@ func (s *Supplier) createSymlinks() error {
 		if exists, err := libbuildpack.FileExists(dest); err != nil {
 			return err
 		} else if exists {
-			files, err := ioutil.ReadDir(dest)
+			files, err := os.ReadDir(dest)
 			if err != nil {
 				return err
 			}
@@ -127,12 +126,12 @@ func (s *Supplier) createSymlinks() error {
 			}
 			for _, file := range files {
 				//TODO: better way to copy a file?
-				contents, err := ioutil.ReadFile(filepath.Join(dest, file.Name()))
+				contents, err := os.ReadFile(filepath.Join(dest, file.Name()))
 				if err != nil {
 					return err
 				}
 				newContents := strings.Replace(string(contents[:]), "prefix=/usr\n", "prefix="+filepath.Join(s.Stager.DepDir(), "apt", "usr")+"\n", -1)
-				err = ioutil.WriteFile(filepath.Join(destDir, file.Name()), []byte(newContents), 0666)
+				err = os.WriteFile(filepath.Join(destDir, file.Name()), []byte(newContents), 0666)
 				if err != nil {
 					return err
 				}

@@ -2,7 +2,6 @@ package apt_test
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -38,13 +37,13 @@ var _ = Describe("Apt", func() {
 		logger = libbuildpack.NewLogger(buffer)
 
 		aptFile = filepath.Join(bpDir, "fixtures", "unit", "aptFile.yml")
-		rootDir, _ = ioutil.TempDir("", "rootdir")
-		cacheDir, _ = ioutil.TempDir("", "cachedir")
-		installDir, _ = ioutil.TempDir("", "installdir")
+		rootDir, _ = os.MkdirTemp("", "rootdir")
+		cacheDir, _ = os.MkdirTemp("", "cachedir")
+		installDir, _ = os.MkdirTemp("", "installdir")
 
-		ioutil.WriteFile(filepath.Join(rootDir, "sources.list"), []byte(""), 0666)
-		ioutil.WriteFile(filepath.Join(rootDir, "trusted.gpg"), []byte(""), 0666)
-		ioutil.WriteFile(filepath.Join(rootDir, "preferences"), []byte(""), 0666)
+		os.WriteFile(filepath.Join(rootDir, "sources.list"), []byte(""), 0666)
+		os.WriteFile(filepath.Join(rootDir, "trusted.gpg"), []byte(""), 0666)
+		os.WriteFile(filepath.Join(rootDir, "preferences"), []byte(""), 0666)
 
 		mockCtrl = gomock.NewController(GinkgoT())
 		mockCommand = NewMockCommand(mockCtrl)
@@ -201,17 +200,17 @@ var _ = Describe("Apt", func() {
 
 				sourceList = filepath.Join(cacheDir, "apt", "sources", "sources.list")
 				Expect(os.MkdirAll(filepath.Dir(sourceList), 0777)).To(Succeed())
-				Expect(ioutil.WriteFile(sourceList, []byte("repo 1\nrepo 2"), 0666)).To(Succeed())
+				Expect(os.WriteFile(sourceList, []byte("repo 1\nrepo 2"), 0666)).To(Succeed())
 
 				prefFile = filepath.Join(cacheDir, "apt", "etc", "preferences")
 				Expect(os.MkdirAll(filepath.Dir(prefFile), 0777)).To(Succeed())
-				Expect(ioutil.WriteFile(prefFile, []byte("Package: *\nPin: release a=repo 1\nPin-Priority"), 0666)).To(Succeed())
+				Expect(os.WriteFile(prefFile, []byte("Package: *\nPin: release a=repo 1\nPin-Priority"), 0666)).To(Succeed())
 			})
 
 			It("adds the repos to the apt sources list", func() {
 				Expect(a.AddRepos()).To(Succeed())
 
-				content, err := ioutil.ReadFile(sourceList)
+				content, err := os.ReadFile(sourceList)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(content)).To(Equal("repo 1\nrepo 2\nrepo 11\nrepo 12\nrepo 13"))
 			})
@@ -219,7 +218,7 @@ var _ = Describe("Apt", func() {
 			It("adds repo priorities to the preferences file", func() {
 				Expect(a.AddRepos()).To(Succeed())
 
-				content, err := ioutil.ReadFile(prefFile)
+				content, err := os.ReadFile(prefFile)
 				Expect(err).ToNot(HaveOccurred())
 				Expect(string(content)).To(Equal("Package: *\nPin: release a=repo 1\nPin-Priority\nPackage: *\nPin: release a=repo 12\nPin-Priority: 99\n\nPackage: *\nPin: release a=repo 13\nPin-Priority: 100\n"))
 			})
@@ -318,11 +317,11 @@ var _ = Describe("Apt", func() {
 	Describe("InstallAll", func() {
 		BeforeEach(func() {
 			var err error
-			cacheDir, err = ioutil.TempDir("", "cachedir")
+			cacheDir, err = os.MkdirTemp("", "cachedir")
 			Expect(err).ToNot(HaveOccurred())
 			Expect(os.MkdirAll(filepath.Join(cacheDir, "apt", "cache", "archives"), 0755)).To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(cacheDir, "apt", "cache", "archives", "holiday.deb"), []byte{}, 0644)).To(Succeed())
-			Expect(ioutil.WriteFile(filepath.Join(cacheDir, "apt", "cache", "archives", "disneyland.deb"), []byte{}, 0644)).To(Succeed())
+			Expect(os.WriteFile(filepath.Join(cacheDir, "apt", "cache", "archives", "holiday.deb"), []byte{}, 0644)).To(Succeed())
+			Expect(os.WriteFile(filepath.Join(cacheDir, "apt", "cache", "archives", "disneyland.deb"), []byte{}, 0644)).To(Succeed())
 		})
 
 		It("installs the downloaded debs", func() {
