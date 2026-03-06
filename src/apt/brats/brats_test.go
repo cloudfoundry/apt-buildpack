@@ -8,7 +8,7 @@ import (
 	"github.com/cloudfoundry/libbuildpack/cutlass"
 
 	"github.com/cloudfoundry/libbuildpack/bratshelper"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
@@ -20,7 +20,7 @@ var _ = Describe("Apt supply buildpack", func() {
 		err    error
 	)
 
-	AfterEach(func() {
+	DeferCleanup(func() {
 		app = DestroyApp(app)
 		repo = DestroyApp(repo)
 		Expect(os.RemoveAll(appDir)).To(Succeed())

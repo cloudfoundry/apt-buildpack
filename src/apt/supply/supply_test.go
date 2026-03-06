@@ -12,7 +12,7 @@ import (
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/golang/mock/gomock"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
@@ -40,15 +40,11 @@ var _ = Describe("Supply", func() {
 		Expect(err).ToNot(HaveOccurred())
 		mockStager.EXPECT().DepDir().AnyTimes().Return(depDir)
 		mockApt = NewMockApt(mockCtrl)
+		DeferCleanup(os.RemoveAll, depDir)
 	})
 
 	JustBeforeEach(func() {
 		supplier = supply.New(mockStager, mockApt, logger)
-	})
-
-	AfterEach(func() {
-		mockCtrl.Finish()
-		os.RemoveAll(depDir)
 	})
 
 	allowAllAptMethods := func() {
