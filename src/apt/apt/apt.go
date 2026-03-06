@@ -151,14 +151,14 @@ func (a *Apt) HasRepos() bool {
 func (a *Apt) AddKeys() error {
 	for _, options := range a.GpgAdvancedOptions {
 		if out, err := a.command.Output("/", "apt-key", "--keyring", a.trustedKeys, "adv", options); err != nil {
-			a.logger.Info(out)
+			a.logger.Info("%s", out)
 			return fmt.Errorf("could not pass gpg advanced options %s\n\n%s\n\n%s", options, out, err)
 		}
 	}
 
 	for _, keyURL := range a.Keys {
 		if out, err := a.command.Output("/", "apt-key", "--keyring", a.trustedKeys, "adv", "--fetch-keys", keyURL); err != nil {
-			a.logger.Info(out)
+			a.logger.Info("%s", out)
 			return fmt.Errorf("could not add apt key %s\n\n%s\n\n%s", keyURL, out, err)
 		}
 	}
@@ -253,7 +253,7 @@ func (a *Apt) DownloadAll() error {
 	aptArgs := append(a.options, "-y", "--allow-downgrades", "--allow-remove-essential", "--allow-change-held-packages", "-d", "install", "--reinstall")
 	args := append(aptArgs, repoPackages...)
 	out, err := a.command.Output("/", "apt-get", args...)
-	a.logger.Info(out)
+	a.logger.Info("%s", out)
 	if err != nil {
 		return fmt.Errorf("failed apt-get install %s\n\n%s", out, err)
 	}
@@ -278,7 +278,7 @@ func (a *Apt) InstallAll() error {
 
 func (a *Apt) install(pkg string) error {
 	output, err := a.command.Output("/", "dpkg", "-x", filepath.Join(a.archiveDir, pkg), a.installDir)
-	a.logger.Info(output)
+	a.logger.Info("%s", output)
 	if err != nil {
 		return fmt.Errorf("failed to install pkg %s\n\n%s\n\n%s", pkg, output, err.Error())
 	}
