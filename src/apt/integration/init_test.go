@@ -62,25 +62,23 @@ func TestIntegration(t *testing.T) {
 	)
 	Expect(err).NotTo(HaveOccurred())
 
-	if os.Getenv("CF_STACK") == "cflinuxfs3" || settings.Platform == "docker" {
-		staticfileBuildpackFolder, err = prepareRequiredBuildpack("staticfile", root)
-		Expect(err).NotTo(HaveOccurred())
+	staticfileBuildpackFolder, err = prepareRequiredBuildpack("staticfile", root)
+	Expect(err).NotTo(HaveOccurred())
 
-		binaryBuildpackFolder, err = prepareRequiredBuildpack("binary", root)
-		Expect(err).NotTo(HaveOccurred())
+	binaryBuildpackFolder, err = prepareRequiredBuildpack("binary", root)
+	Expect(err).NotTo(HaveOccurred())
 
-		err = platform.Initialize(
-			switchblade.Buildpack{
-				Name: "staticfile_buildpack",
-				URI:  filepath.Join(staticfileBuildpackFolder, "staticfile-buildpack.zip"),
-			},
-			switchblade.Buildpack{
-				Name: "binary_buildpack",
-				URI:  filepath.Join(binaryBuildpackFolder, "binary-buildpack.zip"),
-			},
-		)
-		Expect(err).NotTo(HaveOccurred())
-	}
+	err = platform.Initialize(
+		switchblade.Buildpack{
+			Name: "staticfile_buildpack",
+			URI:  filepath.Join(staticfileBuildpackFolder, "staticfile-buildpack.zip"),
+		},
+		switchblade.Buildpack{
+			Name: "binary_buildpack",
+			URI:  filepath.Join(binaryBuildpackFolder, "binary-buildpack.zip"),
+		},
+	)
+	Expect(err).NotTo(HaveOccurred())
 
 	repoName, err := switchblade.RandomName()
 	Expect(err).NotTo(HaveOccurred())
@@ -113,10 +111,8 @@ func TestIntegration(t *testing.T) {
 	Expect(os.Remove(os.Getenv("BUILDPACK_FILE"))).To(Succeed())
 	Expect(os.RemoveAll(rubyBuildpackFolder)).To(Succeed())
 
-	if os.Getenv("CF_STACK") == "cflinuxfs3" {
-		Expect(os.RemoveAll(staticfileBuildpackFolder)).To(Succeed())
-		Expect(os.RemoveAll(binaryBuildpackFolder)).To(Succeed())
-	}
+	Expect(os.RemoveAll(staticfileBuildpackFolder)).To(Succeed())
+	Expect(os.RemoveAll(binaryBuildpackFolder)).To(Succeed())
 }
 
 func prepareRequiredBuildpack(buildpack, root string) (string, error) {
