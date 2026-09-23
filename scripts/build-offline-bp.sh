@@ -11,7 +11,7 @@ source "${ROOTDIR}/scripts/.util/print.sh"
 
 function main() {
   local stack
-  stack="cflinuxfs4"
+  stack="cflinuxfs5"
   outputDir="${ROOTDIR}/build/buildpacks"
 
   while [[ "${#}" != 0 ]]; do
